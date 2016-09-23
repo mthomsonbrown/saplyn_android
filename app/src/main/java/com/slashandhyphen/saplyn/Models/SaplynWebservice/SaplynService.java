@@ -1,10 +1,14 @@
 package com.slashandhyphen.saplyn.Models.SaplynWebservice;
 
+import com.google.gson.JsonObject;
+import com.slashandhyphen.saplyn.Models.Pojo.GenericContainer;
 import com.slashandhyphen.saplyn.Models.Pojo.User;
 
+import org.json.JSONObject;
+
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
 
 /**
@@ -16,4 +20,7 @@ public interface SaplynService {
 
     @POST("sign_in")
     Call<User> loginUser(@Body User user);
+
+    @GET("users")
+    Call<JsonObject> viewUser();
 }

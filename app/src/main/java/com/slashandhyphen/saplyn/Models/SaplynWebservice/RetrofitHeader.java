@@ -19,7 +19,7 @@ import okhttp3.Response;
 public class RetrofitHeader {
     public static OkHttpClient getHeader(final String authorizationValue ) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
         OkHttpClient okClient = new OkHttpClient.Builder()
                 .addInterceptor(
                         new Interceptor() {
@@ -27,12 +27,12 @@ public class RetrofitHeader {
                             public Response intercept(Interceptor.Chain chain) throws IOException {
                                 Request request = null;
                                 if (authorizationValue != null) {
-                                    Log.d("--Authorization-- ", authorizationValue);
 
                                     Request original = chain.request();
                                     // Request customization: add request headers
                                     Request.Builder requestBuilder = original.newBuilder()
-                                            .addHeader("Authorization", authorizationValue);
+                                            .addHeader("Authorization", "Token token=" + authorizationValue)
+                                            .addHeader("Content-Type", "application/json");
 
                                     request = requestBuilder.build();
                                 }
@@ -42,4 +42,6 @@ public class RetrofitHeader {
                 .build();
         return okClient;
     }
+
+
 }
