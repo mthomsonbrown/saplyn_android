@@ -1,10 +1,7 @@
 package com.slashandhyphen.saplyn.Models.SaplynWebservice;
 
 import com.google.gson.JsonObject;
-import com.slashandhyphen.saplyn.Models.Pojo.GenericContainer;
 import com.slashandhyphen.saplyn.Models.Pojo.User;
-
-import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
