@@ -10,8 +10,6 @@ public class FakeModel {
     private User user = new User(token);
 
     public String getStuffFromModel () {
-        user.getStuffFromModel();
-
-        return "Some New String..still refactoring";
+        return user.successString;
     }
 }

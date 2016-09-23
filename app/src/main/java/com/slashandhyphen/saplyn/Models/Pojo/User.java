@@ -22,6 +22,8 @@ public class User {
     // Trailing slash is needed
     private static final String BASE_URL = "https://saplyn-ookamijin.c9users.io/api/v1/";
 
+    public String successString;
+
     public Integer id;
     public String email;
     public String createdAt;
@@ -31,6 +33,47 @@ public class User {
 
     public User(String authToken) {
         this.authToken = authToken;
+
+
+
+        Log.d(TAG, "getStuffFromModel: Getting Stuff");
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(RetrofitHeader.getHeader(authToken))
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        SaplynService service = retrofit.create(SaplynService.class);
+
+        Call<JsonObject> call = service.viewUser();
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if(response.isSuccessful()) {
+                    Log.d(TAG, "onResponse: Got response from callback " + response.code());
+                    Log.d(TAG, "onResponse: " + response.body());
+                }
+                else {
+                    Log.d(TAG, "onResponse: Got an error code: " + response.code());
+                    try {
+                        Log.d(TAG, "onResponse: " + response.errorBody().string());
+                    } catch (IOException e) {
+                        Log.d(TAG, "onResponse: " + "...And it threw an IO Exception...");
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                Log.d(TAG, "onFailure: Got failure from callback");
+                Log.d(TAG, "onFailure: t is: ", t);
+            }
+        });
+
+
+        successString = "Some basic string of success";
     }
 
     public String getUsername() {
