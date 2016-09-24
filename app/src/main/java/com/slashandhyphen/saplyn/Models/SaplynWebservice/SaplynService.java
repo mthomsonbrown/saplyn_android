@@ -19,5 +19,5 @@ public interface SaplynService {
     Call<User> loginUser(@Body User user);
 
     @GET("users")
-    Call<JsonObject> viewUser();
+    Call<User> viewUser();
 }
