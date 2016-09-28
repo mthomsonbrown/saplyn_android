@@ -3,10 +3,12 @@ package com.slashandhyphen.saplyn.Models.SaplynWebservice;
 import com.google.gson.JsonObject;
 import com.slashandhyphen.saplyn.Models.Pojo.User;
 
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import rx.Observable;
 
 /**
  * Created by Mike on 9/17/2016.
@@ -19,5 +21,5 @@ public interface SaplynService {
     Call<User> loginUser(@Body User user);
 
     @GET("users")
-    Call<User> viewUser();
+    Observable<User> viewUser();
 }
