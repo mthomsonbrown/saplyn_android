@@ -7,8 +7,6 @@ import android.util.Log;
  */
 public class User {
     private static final String TAG = "~User~";
-    // Trailing slash is needed
-    private static final String BASE_URL = "https://saplyn-ookamijin.c9users.io/api/v1/";
 
     public String successString;
 

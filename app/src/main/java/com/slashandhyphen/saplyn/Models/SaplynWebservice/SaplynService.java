@@ -1,6 +1,5 @@
 package com.slashandhyphen.saplyn.Models.SaplynWebservice;
 
-import com.google.gson.JsonObject;
 import com.slashandhyphen.saplyn.Models.Pojo.User;
 
 

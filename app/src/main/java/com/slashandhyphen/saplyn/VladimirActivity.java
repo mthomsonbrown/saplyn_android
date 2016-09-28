@@ -12,8 +12,6 @@ import com.slashandhyphen.saplyn.Models.SaplynWebservice.RetrofitUtilities;
 import com.slashandhyphen.saplyn.Models.SaplynWebservice.SaplynService;
 
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
