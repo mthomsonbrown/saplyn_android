@@ -22,4 +22,5 @@ public interface SaplynService {
 
     @GET("users")
     Observable<User> viewUser();
+
 }
