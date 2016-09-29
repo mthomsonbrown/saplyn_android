@@ -1,5 +1,8 @@
 package com.slashandhyphen.saplyn.Models.SaplynWebservice;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.slashandhyphen.saplyn.Models.Pojo.User;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
@@ -25,15 +28,19 @@ public class SaplynService {
     private SaplynInterface saplynInterface;
 
     public SaplynService() {
-        Retrofit retrofit = getRetrofitBuild();
-        saplynInterface = retrofit.create(SaplynInterface.class);
+        saplynInterface = getRetrofitBuild().create(SaplynInterface.class);
+    }
 
+    private Gson withCamelCaseConversion() {
+        return new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
     }
 
     private Retrofit getRetrofitBuild () {
         return new Retrofit.Builder()
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(withCamelCaseConversion()))
                 .baseUrl(BASE_URL)
                 .client(getHeader(authToken))
                 .build();
@@ -61,6 +68,9 @@ public class SaplynService {
         return builder.build();
     }
 
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // Interface Getters/(probably)Setters
     public rx.Observable<User> viewUser() {
         return saplynInterface.viewUser();
     }

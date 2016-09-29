@@ -27,4 +27,10 @@ public class User {
     public String getUsername() {
         return this.username;
     }
+
+    public String getLiveTime() {
+        // Needs to be fixed to actually return time this thing has been used, but it's a POC so I
+        // don't really care.
+        return createdAt;
+    }
 }

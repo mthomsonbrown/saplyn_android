@@ -19,7 +19,9 @@ import static com.slashandhyphen.saplyn.R.id.mr_button;
 public class VladimirActivity extends AppCompatActivity implements View.OnClickListener {
     private static String TAG = "~Vladimir~";
     Button mrButton;
+    Button mrCreateTime;
     TextView fakeText;
+    TextView fakeCreated;
     private Observable<User> userListener;
     private User user;
 
@@ -32,6 +34,11 @@ public class VladimirActivity extends AppCompatActivity implements View.OnClickL
         fakeText = (TextView) findViewById(R.id.hello);
         mrButton = (Button) findViewById(mr_button);
         mrButton.setOnClickListener(this);
+
+        fakeCreated = (TextView) findViewById(R.id.created);
+        mrCreateTime = (Button) findViewById(R.id.mr_create_time);
+        mrCreateTime.setOnClickListener(this);
+
         userListener = saplynService.viewUser();
     }
 
@@ -40,15 +47,28 @@ public class VladimirActivity extends AppCompatActivity implements View.OnClickL
         switch (view.getId()) {
             case R.id.mr_button:
                 doMrButton();
+                break;
+            case R.id.mr_create_time:
+                doCreatedTime();
+                break;
         }
+    }
+
+    private void doCreatedTime() {
+        userListener.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(user -> {
+                            fakeText.setText(user.getUsername());
+                        },
+                        throwable -> Log.e(TAG, "onErrorFromTheGetLiveTime: "
+                                + throwable.getMessage()));
     }
 
     private void doMrButton() {
         userListener.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(randomUser -> {
-                            user = randomUser;
-                            fakeText.setText(user.getUsername());
+                .subscribe(user -> {
+                            fakeCreated.setText(user.getLiveTime());
                         },
                         throwable -> Log.e(TAG, "onErrorFromTheGETUserCall: "
                                 + throwable.getMessage()));
