@@ -8,10 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.slashandhyphen.saplyn.Models.Pojo.User;
-import com.slashandhyphen.saplyn.Models.SaplynWebservice.RetrofitUtilities;
 import com.slashandhyphen.saplyn.Models.SaplynWebservice.SaplynService;
-
-import retrofit2.Retrofit;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -23,7 +20,6 @@ public class VladimirActivity extends AppCompatActivity implements View.OnClickL
     private static String TAG = "~Vladimir~";
     Button mrButton;
     TextView fakeText;
-    Retrofit retrofit;
     private Observable<User> userListener;
     private User user;
 
@@ -31,13 +27,12 @@ public class VladimirActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vladimir);
+        SaplynService saplynService = new SaplynService();
 
         fakeText = (TextView) findViewById(R.id.hello);
         mrButton = (Button) findViewById(mr_button);
         mrButton.setOnClickListener(this);
-        retrofit = RetrofitUtilities.getRetrofitBuild();
-        SaplynService service = retrofit.create(SaplynService.class);
-        userListener = service.viewUser();
+        userListener = saplynService.viewUser();
     }
 
     @Override
