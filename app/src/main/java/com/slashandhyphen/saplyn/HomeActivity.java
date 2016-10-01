@@ -12,8 +12,8 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class VladimirActivity extends AppCompatActivity {
-    private static String TAG = "~Vladimir~";
+public class HomeActivity extends AppCompatActivity {
+    private static String TAG = "~Home~";
     TextView fakeText;
     TextView fakeCreated;
     private Observable<User> userListener;
@@ -21,7 +21,7 @@ public class VladimirActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_vladimir);
+        setContentView(R.layout.activity_home);
         SaplynService saplynService = new SaplynService();
 
         fakeText = (TextView) findViewById(R.id.hello);
@@ -38,7 +38,7 @@ public class VladimirActivity extends AppCompatActivity {
                             fakeText.setText(user.getUsername());
                             fakeCreated.setText(user.getCreatedAt());
                         },
-                        throwable -> Log.e(TAG, "onErrorFromTheGetLiveTime: "
+                        throwable -> Log.e(TAG, "onErrorFromPopulateUser: "
                                 + throwable.getMessage()));
     }
 

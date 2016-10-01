@@ -1,3 +1,26 @@
 <resources>
     <string name="app_name">Saplyn</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="menu_refresh">Refresh</string>
+    <string name="title_activity_welcome">WelcomeActivity</string>
+    <string name="welcome_title">Welcome!</string>
+    <string name="welcome_text">Welcome to the text!</string>
+    <string name="register">Please REGISTER!</string>
+    <string name="login">Please LOG IN!</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="user_password">UR Password</string>
+    <string name="user_email">UR Email</string>
+    <string name="user_name">UR Name</string>
+    <string name="user_password_confirmation">UR Password again</string>
+    <string name="register_disclaimer">I will sell your information</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_authentication">AuthenticationActivity</string>
+    <string name="view_beer">View Beers</string>
+    <string name="add_beer">Add a Beer</string>
+    <string name="title_activity_add_beer">AddBeerActivity</string>
+    <string name="title_activity_view_beers">ViewBeers</string>
+    <string name="change_add_beer_fragment">Change Add Beer Fragment</string>
 </resources>
