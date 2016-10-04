@@ -10,6 +10,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Mike on 9/17/2016.
+ *
+ * Deserialization container for json User objects provisioned from the backend.  This also holds
+ * local functions to act on that data.
  */
 public class User {
     private static final String TAG = "~User~";
@@ -23,6 +26,12 @@ public class User {
     private String authToken;
     private String username;
 
+    /**
+     * Instantiates data needed to create a user object.
+     *
+     * @param authToken the token used to authenticate the user to the server, held in
+     *                  sharedPreferences.
+     */
     public User(String authToken) {
         this.authToken = authToken;
 
@@ -30,10 +39,20 @@ public class User {
 
     }
 
+    /**
+     * Current user's username.
+     *
+     * @return the username
+     */
     public String getUsername() {
         return this.username;
     }
 
+    /**
+     * Created at date from the server.
+     *
+     * @return Custom formatted date string
+     */
     public String getCreatedAt() {
         // TODO Definition should be refactored up
         String datePresentationFormat = "EEE MMM dd, yyyy GG";
@@ -42,6 +61,12 @@ public class User {
                 format(railsTimestampToDate(createdAt));
     }
 
+    /**
+     * Ingests the rails formatted date into something parseable into a java Date object.
+     *
+     * @param railsDate the normal date timestamp returned by generic ActiveRecord
+     * @return a Date object that can be manipulated in Java
+     */
     // TODO Class should be refactored up
     private Date railsTimestampToDate(String railsDate) {
         String railsFormat = "yyyy-MM-dd'T'HH:mm:ss";

@@ -23,4 +23,7 @@
     <string name="title_activity_add_beer">AddBeerActivity</string>
     <string name="title_activity_view_beers">ViewBeers</string>
     <string name="change_add_beer_fragment">Change Add Beer Fragment</string>
+    <string name="auth_token">AuthToken</string>
+    <string name="current_user">CurrentUser</string>
+
 </resources>
