@@ -29,7 +29,6 @@ public class HomeActivity extends Activity {
     TextView fakeCreated;
     private Observable<User> userListener;
     Context context;
-    private static final String authToken = "b1e6668141b3dd7f8b12c13ae38bb78c";
 
     /**
      * Loads what the user sees when first entering user space.
@@ -41,14 +40,10 @@ public class HomeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         context = getApplicationContext();
-        preferences = getSharedPreferences("CurrentUser", MODE_PRIVATE);
-        SaplynService saplynService = new SaplynService(context);
+
         preferences = getSharedPreferences("CurrentUser", MODE_PRIVATE);
         fakeText = (TextView) findViewById(R.id.hello);
         fakeCreated = (TextView) findViewById(R.id.created);
-
-        userListener = saplynService.viewUser();
-        populateUser();
     }
 
     /**
@@ -57,15 +52,17 @@ public class HomeActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
+        SaplynService saplynService = new SaplynService(context);
+
         // Check if user already authenticated
-        // TODO authentication not yet implemented
-        preferences = getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(getString(R.string.auth_token), authToken);
-        editor.apply();
         if (!preferences.contains(getString(R.string.auth_token))) {
             Intent intent = new Intent(HomeActivity.this, AuthenticationActivity.class);
             startActivityForResult(intent, 0);
+        }
+        else {
+            // After user is authenticated, grab their data from the net
+            userListener = saplynService.viewUser();
+            populateUser();
         }
     }
 
