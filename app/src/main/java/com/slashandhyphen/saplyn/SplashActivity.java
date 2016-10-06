@@ -18,8 +18,6 @@ public class SplashActivity extends Activity implements View.OnClickListener {
 
     /**
      * Adds a button to get to user space.
-     *
-     * @param savedInstanceState used to reload state information during lifecycle transitions
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +38,6 @@ public class SplashActivity extends Activity implements View.OnClickListener {
 
     /**
      * Starts the home activity.
-     *
-     * @param view Right now, the start button.
      */
     @Override
     public void onClick(View view) {

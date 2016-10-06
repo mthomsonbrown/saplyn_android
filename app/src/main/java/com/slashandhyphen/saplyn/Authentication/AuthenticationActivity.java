@@ -1,5 +1,8 @@
 package com.slashandhyphen.saplyn.Authentication;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,26 +21,40 @@ import com.slashandhyphen.saplyn.R;
  */
 public class AuthenticationActivity extends FragmentActivity {
     private SharedPreferences preferences;
+    protected FragmentManager fm = getFragmentManager();
+    protected Fragment fragment;
 
     // Debug variables
-    public static final String authToken = "b1e6668141b3dd7f8b12c13ae38bb78c";
+    public static final String debugAuthToken = "b1e6668141b3dd7f8b12c13ae38bb78c";
 
     /**
-     * This calls register and login fragments to handle authentication.  It then adds an auth token
-     * to the sharedPreferences object and returns to the home activity.
-     *
-     * @param savedInstanceState used to reload state information during lifecycle transitions
+     * This creates a WelcomeFragment which handles navigation between authentication options and
+     * ultimately provides an auth token.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
 
-        // For now, just supply the debug auth token and return to HomeActivity.
+        fragment = fm.findFragmentById(R.id.fragment_container);
+        if (fragment == null) {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.add(R.id.fragment_container, new WelcomeFragment());
+            ft.commit();
+        }
+    }
+
+    /**
+     * This is called after an auth token is provisioned by whatever fragment was deployed.  This
+     * stores the auth token and then returns to the home activity.
+     *
+     * @param authToken the auth token provisioned by one of the fragments
+     */
+    protected void onAuthenticationSuccessful(String authToken) {
         storeAuthToken(authToken);
         Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                            startActivity(intent);
-                            finish();
+        startActivity(intent);
+        finish();
     }
 
     /**

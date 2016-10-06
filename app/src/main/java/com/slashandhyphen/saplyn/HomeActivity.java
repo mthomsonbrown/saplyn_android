@@ -32,8 +32,6 @@ public class HomeActivity extends Activity {
 
     /**
      * Loads what the user sees when first entering user space.
-     *
-     * @param savedInstanceState used to reload state information during lifecycle transitions
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {

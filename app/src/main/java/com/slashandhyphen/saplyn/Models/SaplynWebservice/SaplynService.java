@@ -47,7 +47,7 @@ public class SaplynService {
      */
     public SaplynService(Context context) {
         saplynInterface = getRetrofitBuild().create(SaplynInterface.class);
-//       preferences.getString(getString(R.id.auth_token), authToken);
+//       preferences.getString(getString(R.id.auth_token), debugAuthToken);
         preferences = context.getSharedPreferences("CurrentUser", MODE_PRIVATE);
         authToken = preferences.getString(context.getString(R.string.auth_token), "");
     }
