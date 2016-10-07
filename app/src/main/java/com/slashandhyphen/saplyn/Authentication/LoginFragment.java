@@ -2,12 +2,19 @@ package com.slashandhyphen.saplyn.Authentication;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import com.slashandhyphen.saplyn.Models.Pojo.User;
+import com.slashandhyphen.saplyn.Models.SaplynWebservice.SaplynService;
 import com.slashandhyphen.saplyn.R;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Mike on 10/5/2016.
@@ -16,10 +23,10 @@ import com.slashandhyphen.saplyn.R;
  * auth token.
  */
 public class LoginFragment extends Fragment implements View.OnClickListener {
-
+    private static String TAG = "~LoginFragment~";
     RelativeLayout layout;
     AuthenticationActivity activity;
-
+    private Observable<User> userListener;
 
     /**
      * Creates references to relevant views.
@@ -41,10 +48,28 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.button_login:
-                activity.onAuthenticationSuccessful(AuthenticationActivity.debugAuthToken);
+                doLogin();
                 break;
             default:
                 break;
         }
+    }
+
+    /**
+     * Calls the backend API with an email address and password.  After a User object is returned,
+     * a call is made to activity.onAuthenticationSuccessful with the provisioned auth token.
+     */
+    private void doLogin() {
+
+        SaplynService saplynService = new SaplynService();
+        userListener = saplynService.loginUser(AuthenticationActivity.debugUser);
+        userListener.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        user -> {
+                            activity.onAuthenticationSuccessful(user.getAuthToken());
+                        },
+                        throwable -> Log.e(TAG, "onErrorFromPopulateUser: "
+                                + throwable.getMessage()));
     }
 }

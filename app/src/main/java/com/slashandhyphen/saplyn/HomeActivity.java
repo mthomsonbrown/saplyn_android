@@ -12,6 +12,8 @@ import com.slashandhyphen.saplyn.Authentication.AuthenticationActivity;
 import com.slashandhyphen.saplyn.Models.Pojo.User;
 import com.slashandhyphen.saplyn.Models.SaplynWebservice.SaplynService;
 
+import java.util.Objects;
+
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -29,6 +31,7 @@ public class HomeActivity extends Activity {
     TextView fakeCreated;
     private Observable<User> userListener;
     Context context;
+    String authToken;
 
     /**
      * Loads what the user sees when first entering user space.
@@ -50,16 +53,17 @@ public class HomeActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        SaplynService saplynService = new SaplynService(context);
+
+        authToken = preferences.getString(getString(R.string.auth_token), "");
 
         // Check if user already authenticated
-        if (!preferences.contains(getString(R.string.auth_token))) {
+        if (authToken == "") {
             Intent intent = new Intent(HomeActivity.this, AuthenticationActivity.class);
             startActivityForResult(intent, 0);
         }
         else {
             // After user is authenticated, grab their data from the net
-            userListener = saplynService.viewUser();
+            userListener = new SaplynService(authToken).viewUser();
             populateUser();
         }
     }

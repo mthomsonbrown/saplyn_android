@@ -25,6 +25,7 @@ public class User {
     public String updatedAt;
     private String authToken;
     private String username;
+    private String password;
 
     /**
      * Instantiates data needed to create a user object.
@@ -34,18 +35,25 @@ public class User {
      */
     public User(String authToken) {
         this.authToken = authToken;
+    }
 
-        Log.d(TAG, "getStuffFromModel: Getting Stuff");
-
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
     }
 
     /**
-     * Current user's username.
-     *
      * @return the username
      */
     public String getUsername() {
         return this.username;
+    }
+
+    /**
+     * @return the auth token
+     */
+    public String getAuthToken() {
+        return authToken;
     }
 
     /**

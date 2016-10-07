@@ -6,14 +6,13 @@ import android.content.SharedPreferences;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.slashandhyphen.saplyn.Authentication.AuthenticationActivity;
 import com.slashandhyphen.saplyn.Models.Pojo.User;
-import com.slashandhyphen.saplyn.R;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -21,8 +20,6 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import rx.Observable;
-
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by Mike on 9/17/2016.
@@ -32,10 +29,16 @@ import static android.content.Context.MODE_PRIVATE;
  */
 public class SaplynService {
     private static final String BASE_URL = "https://saplyn-ookamijin.c9users.io/api/v1/";
+    private static final String authTokenMissingException = "To use this endpoint you need to " +
+            "create a SaplynService that populates the authToken argument in the constructor";
 
     private SaplynInterface saplynInterface;
     private String authToken;
     private SharedPreferences preferences;
+
+    public SaplynService() {
+        saplynInterface = getRetrofitBuild().create(SaplynInterface.class);
+    }
 
     /**
      * Creates an interface object.
@@ -45,11 +48,9 @@ public class SaplynService {
      * where data is coming from, and that functionality might be extended at some point, so I'll
      * leave it like this for now.
      */
-    public SaplynService(Context context) {
+    public SaplynService(String authToken) {
+        this.authToken = authToken;
         saplynInterface = getRetrofitBuild().create(SaplynInterface.class);
-//       preferences.getString(getString(R.id.auth_token), debugAuthToken);
-        preferences = context.getSharedPreferences("CurrentUser", MODE_PRIVATE);
-        authToken = preferences.getString(context.getString(R.string.auth_token), "");
     }
 
     /**
@@ -65,19 +66,17 @@ public class SaplynService {
     }
 
     /**
-     * Creates a retrofit object that can be used for interaction with the rails API.  In the
-     * future, there may be endpoints that need different information, so I can add new methods of
-     * this type, but I don't currently see that as being necessary.
+     * Creates a retrofit object that can be used for interaction with the rails API.
      *
      * @return a Retrofit object to obtain an interface from
      */
     private Retrofit getRetrofitBuild () {
-        return new Retrofit.Builder()
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create(withCamelCaseConversion()))
-                .baseUrl(BASE_URL)
-                .client(getHeader(authToken))
-                .build();
+            return new Retrofit.Builder()
+                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(withCamelCaseConversion()))
+                    .baseUrl(BASE_URL)
+                    .client(getHeader(authToken))
+                    .build();
     }
 
     /**
@@ -85,29 +84,45 @@ public class SaplynService {
      * at least, requiring an auth token.  At some point, there will be GETs and POSTs that don't
      * have an auth token, so this will probably be the source of change in this class.
      *
-     * @param authorizationValue the AuthToken
+     * @param authToken the AuthToken
      * @return an OkHttpClient object used by a Retrofit object to create a SaplynService interface
      * to talk to the backend.
      */
-    private OkHttpClient getHeader(final String authorizationValue ) {
+    private OkHttpClient getHeader(String authToken ) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.addInterceptor(
-                chain -> {
-                    Request request = null;
-                    if (authorizationValue != null) {
+        if(authToken != null) {
+            builder.addInterceptor(
+                    chain -> {
+                        Request request = null;
 
-                        Request original = chain.request();
-                        // Request customization: add request headers
-                        Request.Builder requestBuilder = original.newBuilder()
-                                .addHeader("Authorization", "Token token=" + authorizationValue)
-                                .addHeader("Content-Type", "application/json");
+                            Request original = chain.request();
+                            // Request customization: add request headers
+                            Request.Builder requestBuilder = original.newBuilder()
+                                    .addHeader("Content-Type", "application/json")
+                                    .addHeader("Authorization", "Token token=" + authToken);
 
-                        request = requestBuilder.build();
-                    }
-                    return chain.proceed(request);
-                });
+                            request = requestBuilder.build();
+
+                        return chain.proceed(request);
+                    });
+        }
+
+        else {
+            builder.addInterceptor(
+                    chain -> {
+                        Request request = null;
+
+                            Request original = chain.request();
+                            // Request customization: add request headers
+                            Request.Builder requestBuilder = original.newBuilder()
+                                    .addHeader("Content-Type", "application/json");
+                            request = requestBuilder.build();
+
+                        return chain.proceed(request);
+                    });
+        }
         return builder.build();
     }
 
@@ -119,9 +134,18 @@ public class SaplynService {
      * Calls the SaplynService GET users endpoint and returns an Observable
      *
      * @return a callback to obtain user data
+     * @throws RuntimeException if auth token has not been set in the constructor
+     * of this SaplynService
      */
-    public rx.Observable<User> viewUser() {
+    public rx.Observable<User> viewUser() throws RuntimeException {
+        if(authToken == null) {
+            throw new RuntimeException(authTokenMissingException);
+        }
         return saplynInterface.viewUser();
+    }
+
+    public rx.Observable<User> loginUser(User user) {
+        return saplynInterface.loginUser(user);
     }
 
     /**
@@ -130,7 +154,7 @@ public class SaplynService {
     interface SaplynInterface {
 
         @POST("sign_in")
-        Call<User> loginUser(@Body User user);
+        Observable<User> loginUser(@Body User user);
 
         @GET("users")
         Observable<User> viewUser();

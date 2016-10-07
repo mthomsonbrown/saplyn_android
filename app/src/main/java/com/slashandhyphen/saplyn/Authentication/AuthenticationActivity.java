@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
 import com.slashandhyphen.saplyn.HomeActivity;
+import com.slashandhyphen.saplyn.Models.Pojo.User;
 import com.slashandhyphen.saplyn.R;
 
 /**
@@ -26,6 +27,7 @@ public class AuthenticationActivity extends FragmentActivity {
 
     // Debug variables
     public static final String debugAuthToken = "b1e6668141b3dd7f8b12c13ae38bb78c";
+    public static final User debugUser = new User("username@test2.com", "qwertyuiop");
 
     /**
      * This creates a WelcomeFragment which handles navigation between authentication options and
