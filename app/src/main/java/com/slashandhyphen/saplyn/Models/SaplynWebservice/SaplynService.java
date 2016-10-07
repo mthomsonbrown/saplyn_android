@@ -1,12 +1,10 @@
 package com.slashandhyphen.saplyn.Models.SaplynWebservice;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.slashandhyphen.saplyn.Authentication.AuthenticationActivity;
 import com.slashandhyphen.saplyn.Models.Pojo.User;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
@@ -92,37 +90,24 @@ public class SaplynService {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        if(authToken != null) {
-            builder.addInterceptor(
-                    chain -> {
-                        Request request = null;
+        builder.addInterceptor(
+                chain -> {
+                    Request request = null;
 
-                            Request original = chain.request();
-                            // Request customization: add request headers
-                            Request.Builder requestBuilder = original.newBuilder()
-                                    .addHeader("Content-Type", "application/json")
-                                    .addHeader("Authorization", "Token token=" + authToken);
+                    Request original = chain.request();
+                    // Request customization: add request headers
+                    Request.Builder requestBuilder = original.newBuilder()
+                            .addHeader("Content-Type", "application/json");
 
-                            request = requestBuilder.build();
+                    if(authToken != null) {
+                        requestBuilder.addHeader("Authorization", "Token token=" + authToken);
+                    }
 
-                        return chain.proceed(request);
-                    });
-        }
+                        request = requestBuilder.build();
 
-        else {
-            builder.addInterceptor(
-                    chain -> {
-                        Request request = null;
+                    return chain.proceed(request);
+                });
 
-                            Request original = chain.request();
-                            // Request customization: add request headers
-                            Request.Builder requestBuilder = original.newBuilder()
-                                    .addHeader("Content-Type", "application/json");
-                            request = requestBuilder.build();
-
-                        return chain.proceed(request);
-                    });
-        }
         return builder.build();
     }
 
