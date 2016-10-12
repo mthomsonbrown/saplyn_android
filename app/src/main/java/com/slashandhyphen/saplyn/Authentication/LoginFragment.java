@@ -32,7 +32,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
      * Creates references to relevant views.
      */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
         activity = (AuthenticationActivity) getActivity();
         layout = (RelativeLayout) inflater.inflate(R.layout.fragment_login, container, false);
 

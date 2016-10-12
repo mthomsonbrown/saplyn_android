@@ -1,7 +1,5 @@
 package com.slashandhyphen.saplyn.Models.SaplynWebservice;
 
-import android.content.SharedPreferences;
-
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -32,7 +30,6 @@ public class SaplynService {
 
     private SaplynInterface saplynInterface;
     private String authToken;
-    private SharedPreferences preferences;
 
     public SaplynService() {
         saplynInterface = getRetrofitBuild().create(SaplynInterface.class);
@@ -78,9 +75,9 @@ public class SaplynService {
     }
 
     /**
-     * This populates header data for requests to the Saplyn service.  Right now it deals with GETs
-     * at least, requiring an auth token.  At some point, there will be GETs and POSTs that don't
-     * have an auth token, so this will probably be the source of change in this class.
+     * This populates header data for requests to the Saplyn service.  It will create both
+     * authenticated and unauthenticated requests.  The endpoint wrappers will throw an exception
+     * if valid data is not supplied.
      *
      * @param authToken the AuthToken
      * @return an OkHttpClient object used by a Retrofit object to create a SaplynService interface
@@ -95,7 +92,6 @@ public class SaplynService {
                     Request request = null;
 
                     Request original = chain.request();
-                    // Request customization: add request headers
                     Request.Builder requestBuilder = original.newBuilder()
                             .addHeader("Content-Type", "application/json");
 
@@ -113,7 +109,7 @@ public class SaplynService {
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-    // Interface Getters/(probably)Setters
+    // Interface Getters/Setters
 
     /**
      * Calls the SaplynService GET users endpoint and returns an Observable
@@ -129,6 +125,12 @@ public class SaplynService {
         return saplynInterface.viewUser();
     }
 
+    /**
+     * Gets an auth token from the backend.
+     *
+     * @param user should have at least an email and password.
+     * @return a user object with (hopefully) an auth token
+     */
     public rx.Observable<User> loginUser(User user) {
         return saplynInterface.loginUser(user);
     }

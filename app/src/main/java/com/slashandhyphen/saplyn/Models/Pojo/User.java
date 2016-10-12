@@ -6,7 +6,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Mike on 9/17/2016.
@@ -17,8 +16,6 @@ import java.util.concurrent.TimeUnit;
 public class User {
     private static final String TAG = "~User~";
 
-    public String successString;
-
     public Integer id;
     public String email;
     private String createdAt;
@@ -28,7 +25,7 @@ public class User {
     private String password;
 
     /**
-     * Instantiates data needed to create a user object.
+     * Instantiates a user object with an auth token
      *
      * @param authToken the token used to authenticate the user to the server, held in
      *                  sharedPreferences.
@@ -37,6 +34,12 @@ public class User {
         this.authToken = authToken;
     }
 
+    /**
+     * Creates a user object without an authToken to be used to obtain one.
+     *
+     * @param email ur email
+     * @param password your password
+     */
     public User(String email, String password) {
         this.email = email;
         this.password = password;

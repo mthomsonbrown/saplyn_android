@@ -29,6 +29,7 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
         layout = (RelativeLayout) inflater.inflate(R.layout.fragment_welcome, container, false);
 
         layout.findViewById(R.id.button_welcome_login).setOnClickListener(this);
+        layout.findViewById(R.id.button_welcome_register).setOnClickListener(this);
 
         return layout;
     }
@@ -42,6 +43,9 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
             case R.id.button_welcome_login:
                 login();
                 break;
+            case R.id.button_welcome_register:
+                register();
+                break;
             default:
                 break;
         }
@@ -53,6 +57,15 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
     private void login() {
         FragmentTransaction ft = activity.fm.beginTransaction();
         ft.replace(R.id.fragment_container, new LoginFragment());
+        ft.commit();
+    }
+
+    /**
+     * Calls the register fragment and then returns an auth token back to AuthenticationActivity.
+     */
+    private void register() {
+        FragmentTransaction ft = activity.fm.beginTransaction();
+        ft.replace(R.id.fragment_container, new RegisterFragment());
         ft.commit();
     }
 }
