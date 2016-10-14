@@ -62,9 +62,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
      * a call is made to activity.onAuthenticationSuccessful with the provisioned auth token.
      */
     private void doLogin() {
-
         SaplynService saplynService = new SaplynService();
-        userListener = saplynService.loginUser(AuthenticationActivity.debugUser);
+        userListener = saplynService.loginUser(AuthenticationActivity.debugUserLogin);
         userListener.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

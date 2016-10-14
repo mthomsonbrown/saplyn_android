@@ -3,16 +3,19 @@ package com.slashandhyphen.saplyn.Authentication;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.slashandhyphen.saplyn.Models.Pojo.User;
+import com.slashandhyphen.saplyn.Models.SaplynWebservice.SaplynService;
 import com.slashandhyphen.saplyn.R;
 
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Mike on 10/11/2016.
@@ -53,7 +56,19 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    /**
+     * Sends a POST request to the saplyn webservice in order to create a new user object
+     */
     private void doRegister() {
-        Toast.makeText(getActivity(), "Clicked register", Toast.LENGTH_SHORT).show();
+        SaplynService saplynService = new SaplynService();
+        userListener = saplynService.registerUser(AuthenticationActivity.debugUserRegister);
+        userListener.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        user -> {
+                            activity.onAuthenticationSuccessful(user.getAuthToken());
+                        },
+                        throwable -> Log.e(TAG, "onErrorFromPopulateUser: "
+                                + throwable.getMessage()));
     }
 }

@@ -27,7 +27,8 @@ public class AuthenticationActivity extends FragmentActivity {
 
     // Debug variables
     public static final String debugAuthToken = "b1e6668141b3dd7f8b12c13ae38bb78c";
-    public static final User debugUser = new User("username@test2.com", "qwertyuiop");
+    public static final User debugUserLogin = new User("user@sign_in.com", "qwertyuiop");
+    public static final User debugUserRegister = new User("usernamet@test2.com", "qwertyuiop", "qwertyuiop");
 
     /**
      * This creates a WelcomeFragment which handles navigation between authentication options and

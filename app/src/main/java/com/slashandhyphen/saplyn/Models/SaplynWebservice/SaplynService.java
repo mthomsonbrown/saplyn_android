@@ -107,9 +107,7 @@ public class SaplynService {
         return builder.build();
     }
 
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    // Interface Getters/Setters
+    /*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Interface Getters/Setters $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
 
     /**
      * Calls the SaplynService GET users endpoint and returns an Observable
@@ -131,8 +129,12 @@ public class SaplynService {
      * @param user should have at least an email and password.
      * @return a user object with (hopefully) an auth token
      */
-    public rx.Observable<User> loginUser(User user) {
+    public Observable<User> loginUser(User user) {
         return saplynInterface.loginUser(user);
+    }
+
+    public Observable<User> registerUser(User user) {
+        return saplynInterface.createUser(user);
     }
 
     /**
@@ -142,6 +144,9 @@ public class SaplynService {
 
         @POST("sign_in")
         Observable<User> loginUser(@Body User user);
+
+        @POST("users")
+        Observable<User> createUser(@Body User user);
 
         @GET("users")
         Observable<User> viewUser();

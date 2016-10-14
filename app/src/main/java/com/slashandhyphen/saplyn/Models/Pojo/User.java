@@ -8,90 +8,145 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Created by Mike on 9/17/2016.
+ * Created by Mike on 10/12/2016.
  *
  * Deserialization container for json User objects provisioned from the backend.  This also holds
  * local functions to act on that data.
  */
+
 public class User {
-    private static final String TAG = "~User~";
-
-    public Integer id;
-    public String email;
-    private String createdAt;
-    public String updatedAt;
-    private String authToken;
-    private String username;
-    private String password;
+    private UserData user;
 
     /**
-     * Instantiates a user object with an auth token
+     * constructor
      *
-     * @param authToken the token used to authenticate the user to the server, held in
-     *                  sharedPreferences.
-     */
-    public User(String authToken) {
-        this.authToken = authToken;
-    }
-
-    /**
-     * Creates a user object without an authToken to be used to obtain one.
-     *
-     * @param email ur email
-     * @param password your password
+     * @param email email address of the user
+     * @param password the password for the user account
      */
     public User(String email, String password) {
-        this.email = email;
-        this.password = password;
+        user = new UserData(email, password);
     }
 
     /**
-     * @return the username
+     * constructor
+     *
+     * @param email email address of the user
+     * @param password the password for the user account
+     * @param passwordConfirmation the password for the user account
      */
-    public String getUsername() {
-        return this.username;
+    public User(String email, String password, String passwordConfirmation) {
+        this.user = new UserData(email, password, passwordConfirmation);
     }
 
     /**
-     * @return the auth token
+     * @return the auth token provisioned from the server
      */
     public String getAuthToken() {
-        return authToken;
+        return user.getAuthToken();
     }
 
     /**
-     * Created at date from the server.
-     *
-     * @return Custom formatted date string
+     * @return the username of the user
+     */
+    public String getUsername() {
+        return user.getUsername();
+    }
+
+    /**
+     * @return the time the entry was created
      */
     public String getCreatedAt() {
-        // TODO Definition should be refactored up
-        String datePresentationFormat = "EEE MMM dd, yyyy GG";
-
-        return new SimpleDateFormat(datePresentationFormat, new Locale("en_US")).
-                format(railsTimestampToDate(createdAt));
+        return user.getCreatedAt();
     }
 
+    /*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Internal User Class Stuff $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
     /**
-     * Ingests the rails formatted date into something parseable into a java Date object.
-     *
-     * @param railsDate the normal date timestamp returned by generic ActiveRecord
-     * @return a Date object that can be manipulated in Java
+     * The actual user data is stored in this internal class in order to conform to Rails' JSON
+     * structure.
      */
-    // TODO Class should be refactored up
-    private Date railsTimestampToDate(String railsDate) {
-        String railsFormat = "yyyy-MM-dd'T'HH:mm:ss";
-        SimpleDateFormat dateFormat = new SimpleDateFormat(railsFormat, new Locale("en_US"));
-        Date date = null;
-        try {
-            // TODO Enter terrible hacks.  I don't care about milliseconds, and that's where the
-            // parse function is throwing a parse exception, so I will remove that bit:
-            String hackyDate = railsDate.substring(0, 18);
+    private class UserData {
+        private static final String TAG = "~User~";
 
-            date = dateFormat.parse(hackyDate);
-        } catch (ParseException e) {
-            Log.d(TAG, "railsTimestampToDate: " + e.getMessage());
+        private Integer id;
+        private String email;
+        private String createdAt;
+        private String updatedAt;
+        private String authToken;
+        private String username;
+        private String password;
+        private String passwordConfirmation;
+
+        /**
+         * Creates a user object without an authToken to be used to obtain one.
+         *
+         * @param email your email
+         * @param password your password
+         */
+        UserData(String email, String password) {
+            this.email = email;
+            this.password = password;
         }
-        return date;
+
+        /**
+         * Creates a user object without an authToken to be used to obtain one.
+         *
+         * @param email your email
+         * @param password your password
+         */
+        UserData(String email, String password, String passwordConfirmation) {
+            this.email = email;
+            this.password = password;
+            this.passwordConfirmation = passwordConfirmation;
+        }
+
+        /**
+         * @return the username
+         */
+        String getUsername() {
+            return this.username;
+        }
+
+        /**
+         * @return the auth token
+         */
+        String getAuthToken() {
+            return authToken;
+        }
+
+        /**
+         * Created at date from the server.
+         *
+         * @return Custom formatted date string
+         */
+        String getCreatedAt() {
+            // TODO Definition should be refactored up
+            String datePresentationFormat = "EEE MMM dd, yyyy GG";
+
+            return new SimpleDateFormat(datePresentationFormat, new Locale("en_US")).
+                    format(railsTimestampToDate(createdAt));
+        }
+
+        /**
+         * Ingests the rails formatted date into something parseable into a java Date object.
+         *
+         * @param railsDate the normal date timestamp returned by generic ActiveRecord
+         * @return a Date object that can be manipulated in Java
+         */
+        // TODO Class should be refactored up
+        private Date railsTimestampToDate(String railsDate) {
+            String railsFormat = "yyyy-MM-dd'T'HH:mm:ss";
+            SimpleDateFormat dateFormat = new SimpleDateFormat(railsFormat, new Locale("en_US"));
+            Date date = null;
+            try {
+                // TODO Enter terrible hacks.  I don't care about milliseconds, and that's where the
+                // parse function is throwing a parse exception, so I will remove that bit:
+                String hackyDate = railsDate.substring(0, 18);
+
+                date = dateFormat.parse(hackyDate);
+            } catch (ParseException e) {
+                Log.d(TAG, "railsTimestampToDate: " + e.getMessage());
+            }
+            return date;
+        }
     }
 }
