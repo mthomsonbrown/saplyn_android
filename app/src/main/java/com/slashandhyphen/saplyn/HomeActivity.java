@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.slashandhyphen.saplyn.Authentication.AuthenticationActivity;
@@ -22,11 +24,12 @@ import rx.schedulers.Schedulers;
  * This is the landing page for user space.  If an auth token is present, this activity is
  * displayed.  If not, AuthenticationActivity is summoned.
  */
-public class HomeActivity extends Activity {
+public class HomeActivity extends Activity implements View.OnClickListener {
     private static SharedPreferences preferences;
     private static String TAG = "~Home~";
     TextView fakeText;
     TextView fakeCreated;
+    Button logoutButton;
     private Observable<User> userListener;
     Context context;
     String authToken;
@@ -43,6 +46,8 @@ public class HomeActivity extends Activity {
         preferences = getSharedPreferences("CurrentUser", MODE_PRIVATE);
         fakeText = (TextView) findViewById(R.id.hello);
         fakeCreated = (TextView) findViewById(R.id.created);
+        logoutButton = (Button) findViewById(R.id.button_logout);
+        logoutButton.setOnClickListener(this);
     }
 
     /**
@@ -61,6 +66,8 @@ public class HomeActivity extends Activity {
         }
         else {
             // After user is authenticated, grab their data from the net
+            // TODO This will ping the net on every resume (which is probably frequent).
+            // TODO Need to add in syncing logic
             userListener = new SaplynService(authToken).viewUser();
             populateUser();
         }
@@ -73,11 +80,34 @@ public class HomeActivity extends Activity {
         userListener.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(user -> {
-                            fakeText.setText(user.getUsername());
+                            fakeText.setText(user.getEmail());
                             fakeCreated.setText(user.getCreatedAt());
                         },
                         throwable -> Log.e(TAG, "onErrorFromPopulateUser: "
                                 + throwable.getMessage()));
     }
 
+    /**
+     * @param view currently only responds to a logout button
+     */
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.button_logout:
+                logout();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Deletes the shared preference auth_token, then spawns a new instance of
+     * the AuthenticationActivity
+     */
+    private void logout() {
+        preferences.edit().remove(getString(R.string.auth_token)).commit();
+        Intent intent = new Intent(HomeActivity.this, AuthenticationActivity.class);
+        startActivityForResult(intent, 0);
+    }
 }

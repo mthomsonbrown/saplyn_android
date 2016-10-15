@@ -59,6 +59,13 @@ public class User {
         return user.getCreatedAt();
     }
 
+    /**
+     * @return email address of the user
+     */
+    public String getEmail() {
+        return user.getEmail();
+    }
+
     /*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Internal User Class Stuff $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
     /**
      * The actual user data is stored in this internal class in order to conform to Rails' JSON
@@ -111,6 +118,13 @@ public class User {
          */
         String getAuthToken() {
             return authToken;
+        }
+
+        /**
+         * @return the emails
+         */
+        private String getEmail() {
+            return email;
         }
 
         /**

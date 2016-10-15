@@ -25,4 +25,13 @@
         android:layout_below="@+id/hello"
         android:layout_centerHorizontal="true"
         style="@style/TextViewStyle" />
+
+    <Button
+        android:text="Log out"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="25dp"
+        android:id="@+id/button_logout" />
 </RelativeLayout>
