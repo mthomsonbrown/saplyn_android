@@ -66,6 +66,10 @@ public class User {
         return user.getEmail();
     }
 
+    public int getId() {
+        return user.getId();
+    }
+
     /*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Internal User Class Stuff $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
     /**
      * The actual user data is stored in this internal class in order to conform to Rails' JSON
@@ -161,6 +165,10 @@ public class User {
                 Log.d(TAG, "railsTimestampToDate: " + e.getMessage());
             }
             return date;
+        }
+
+        public Integer getId() {
+            return id;
         }
     }
 }

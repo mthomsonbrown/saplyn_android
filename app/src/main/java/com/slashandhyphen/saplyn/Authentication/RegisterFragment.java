@@ -8,11 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.slashandhyphen.saplyn.Models.Pojo.User;
 import com.slashandhyphen.saplyn.Models.SaplynWebservice.SaplynService;
 import com.slashandhyphen.saplyn.R;
 
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
+import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -28,6 +33,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     RelativeLayout layout;
     AuthenticationActivity activity;
     private Observable<User> userListener;
+    SaplynService saplynService;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,12 +44,14 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
         layout.findViewById(R.id.button_register).setOnClickListener(this);
 
+        saplynService = new SaplynService();
+
         return layout;
     }
 
 
     /**
-     * Maybe this should be put inline.  All I think it will ever do is call the login button.
+     * Right now this only presents registration
      */
     @Override
     public void onClick(View view) {
@@ -60,15 +68,32 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
      * Sends a POST request to the saplyn webservice in order to create a new user object
      */
     private void doRegister() {
-        SaplynService saplynService = new SaplynService();
-        userListener = saplynService.registerUser(AuthenticationActivity.debugUserRegister);
+        userListener = saplynService.registerUser(AuthenticationActivity.debugUser);
         userListener.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         user -> {
                             activity.onAuthenticationSuccessful(user.getAuthToken());
                         },
-                        throwable -> Log.e(TAG, "onErrorFromPopulateUser: "
-                                + throwable.getMessage()));
+                        throwable -> {
+                            if(throwable instanceof HttpException) {
+                                ResponseBody body = ((HttpException) throwable).response().errorBody();
+                                try {
+                                    // TODO Should definitely handle errors better than a string compare
+                                    String error = body.string();
+                                    if(error.contains("Email address already registered")) {
+                                        // cannot pass body.string() here or will
+                                        // get "Content-Length and stream length disagree" error
+                                        Toast.makeText(getActivity(),
+                                                "Email address already registered",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                } catch (IOException e) {
+                                    Log.d(TAG, "doRegister: There were an exception");
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                );
     }
 }

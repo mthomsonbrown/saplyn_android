@@ -63,7 +63,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
      */
     private void doLogin() {
         SaplynService saplynService = new SaplynService();
-        userListener = saplynService.loginUser(AuthenticationActivity.debugUserLogin);
+        userListener = saplynService.loginUser(AuthenticationActivity.debugUser);
         userListener.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

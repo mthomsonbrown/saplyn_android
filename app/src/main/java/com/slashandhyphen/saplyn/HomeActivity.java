@@ -14,6 +14,10 @@ import com.slashandhyphen.saplyn.Authentication.AuthenticationActivity;
 import com.slashandhyphen.saplyn.Models.Pojo.User;
 import com.slashandhyphen.saplyn.Models.SaplynWebservice.SaplynService;
 
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
+import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -33,6 +37,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
     private Observable<User> userListener;
     Context context;
     String authToken;
+    SaplynService saplynService;
 
     /**
      * Loads what the user sees when first entering user space.
@@ -48,6 +53,12 @@ public class HomeActivity extends Activity implements View.OnClickListener {
         fakeCreated = (TextView) findViewById(R.id.created);
         logoutButton = (Button) findViewById(R.id.button_logout);
         logoutButton.setOnClickListener(this);
+
+        // I think I like this better than defining a button object...unless I need one
+        findViewById(R.id.button_deregister).setOnClickListener(this);
+
+        authToken = preferences.getString(getString(R.string.auth_token), "");
+        saplynService = new SaplynService(authToken);
     }
 
     /**
@@ -56,8 +67,6 @@ public class HomeActivity extends Activity implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-
-        authToken = preferences.getString(getString(R.string.auth_token), "");
 
         // Check if user already authenticated
         if (authToken == "") {
@@ -68,7 +77,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
             // After user is authenticated, grab their data from the net
             // TODO This will ping the net on every resume (which is probably frequent).
             // TODO Need to add in syncing logic
-            userListener = new SaplynService(authToken).viewUser();
+            userListener = saplynService.viewUser();
             populateUser();
         }
     }
@@ -79,22 +88,32 @@ public class HomeActivity extends Activity implements View.OnClickListener {
     private void populateUser() {
         userListener.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(user -> {
+                .subscribe(
+                        user -> {
                             fakeText.setText(user.getEmail());
                             fakeCreated.setText(user.getCreatedAt());
                         },
-                        throwable -> Log.e(TAG, "onErrorFromPopulateUser: "
-                                + throwable.getMessage()));
+                        throwable -> {
+                            if(throwable instanceof HttpException) {
+                                ResponseBody body = ((HttpException) throwable).response().errorBody();
+                                Log.e(TAG, "onErrorFromPopulateUser: "
+                                        + body.toString());
+                            }
+                        }
+                );
     }
 
     /**
-     * @param view currently only responds to a logout button
+     * @param view handles lotout and deregister actions
      */
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.button_logout:
                 logout();
+                break;
+            case R.id.button_deregister:
+                doDeregister();
                 break;
             default:
                 break;
@@ -109,5 +128,42 @@ public class HomeActivity extends Activity implements View.OnClickListener {
         preferences.edit().remove(getString(R.string.auth_token)).commit();
         Intent intent = new Intent(HomeActivity.this, AuthenticationActivity.class);
         startActivityForResult(intent, 0);
+    }
+
+    /**
+     * This will be dissected later, but right now it grabs a user id using the current auth token
+     * and then uses that userId to destroy itself
+     */
+    private void doDeregister() {
+        userListener = saplynService.viewUser();
+        userListener.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        user -> {
+                            Log.e(TAG, "doDeregister: Maybe destroying?");
+                            Observable<ResponseBody> response = saplynService.destroyUser(user.getId());
+                            response.subscribeOn(Schedulers.newThread())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(
+                                            theResponse -> {
+                                                // TODO sanity check:
+                                                /*
+                                                should do a sanity check here, but if we get
+                                                here, then there's good confidence the
+                                                operation passed.  I'd like to grab the status code
+                                                from the theResponse object, but that's more trouble
+                                                than it's worth to me right now.
+                                                 */
+
+                                                // user's been deleted from web service, time to
+                                                // log out from the client:
+                                                logout();
+                                            }
+                                    );
+                        },
+                        throwable -> {
+                            Log.e(TAG, "doDeregister: " + throwable.getMessage());
+                        }
+                );
     }
 }

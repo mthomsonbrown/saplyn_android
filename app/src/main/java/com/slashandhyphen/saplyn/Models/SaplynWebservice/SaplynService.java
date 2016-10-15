@@ -9,12 +9,16 @@ import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import rx.Observable;
 
 /**
@@ -110,13 +114,13 @@ public class SaplynService {
     /*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Interface Getters/Setters $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
 
     /**
-     * Calls the SaplynService GET users endpoint and returns an Observable
+     * Calls the SaplynService GET users endpoint and returns a user object
      *
      * @return a callback to obtain user data
      * @throws RuntimeException if auth token has not been set in the constructor
      * of this SaplynService
      */
-    public rx.Observable<User> viewUser() throws RuntimeException {
+    public Observable<User> viewUser() throws RuntimeException {
         if(authToken == null) {
             throw new RuntimeException(authTokenMissingException);
         }
@@ -126,15 +130,29 @@ public class SaplynService {
     /**
      * Gets an auth token from the backend.
      *
-     * @param user should have at least an email and password.
-     * @return a user object with (hopefully) an auth token
+     * @param user should have at least an email and password
+     * @return a user object with an auth token
      */
     public Observable<User> loginUser(User user) {
         return saplynInterface.loginUser(user);
     }
 
+    /**
+     * Creates a new user in the backend and supplies an auth token that can be added to
+     * shared preferences
+     *
+     * @param user needs an email address, password, and password confirmation
+     * @return a user object with an auth token
+     */
     public Observable<User> registerUser(User user) {
         return saplynInterface.createUser(user);
+    }
+
+    /**
+     * Sends a deregister request to the backend for the given user id
+     */
+    public Observable<ResponseBody> destroyUser(int userId) {
+        return saplynInterface.destroyUser(userId);
     }
 
     /**
@@ -150,6 +168,9 @@ public class SaplynService {
 
         @GET("users")
         Observable<User> viewUser();
+
+        @DELETE("users/{id}")
+        Observable<ResponseBody> destroyUser(@Path("id") int userId);
 
     }
 }

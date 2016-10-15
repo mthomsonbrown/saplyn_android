@@ -30,8 +30,23 @@
         android:text="Log out"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/button_logout"
+        android:layout_alignBaseline="@+id/button_deregister"
+        android:layout_alignBottom="@+id/button_deregister"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="25dp"
+        android:layout_marginStart="25dp" />
+
+    <Button
+        android:text="Deregister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_deregister"
+        android:layout_marginBottom="13dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="25dp"
-        android:id="@+id/button_logout" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="25dp"
+        android:layout_marginEnd="25dp" />
 </RelativeLayout>
