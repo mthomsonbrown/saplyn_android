@@ -2,11 +2,53 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
+    <TextView
+        android:text="Email Address:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/email_edit_text_login"
+        android:layout_alignStart="@+id/email_edit_text_login"
+        android:id="@+id/email_text_login"
+        />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:ems="10"
+        android:layout_below="@+id/email_text_login"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/email_edit_text_login"
+        />
+
+    <TextView
+        android:text="Password:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/email_edit_text_login"
+        android:layout_marginTop="35dp"
+        android:layout_alignLeft="@+id/password_edit_text_login"
+        android:layout_alignStart="@+id/password_edit_text_login"
+        android:id="@+id/password_text_login"
+        />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:layout_below="@+id/password_text_login"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/password_edit_text_login"
+        />
+
     <Button
         android:text="Log in"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:id="@+id/button_login" />
+        android:id="@+id/login_button_login" />
 </RelativeLayout>

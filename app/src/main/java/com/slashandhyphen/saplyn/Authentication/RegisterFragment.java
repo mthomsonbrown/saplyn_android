@@ -42,7 +42,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         activity = (AuthenticationActivity) getActivity();
         layout = (RelativeLayout) inflater.inflate(R.layout.fragment_register, container, false);
 
-        layout.findViewById(R.id.button_register).setOnClickListener(this);
+        layout.findViewById(R.id.register_button_register).setOnClickListener(this);
 
         saplynService = new SaplynService();
 
@@ -56,7 +56,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.button_register:
+            case R.id.register_button_register:
                 doRegister();
                 break;
             default:

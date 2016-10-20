@@ -38,7 +38,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         activity = (AuthenticationActivity) getActivity();
         layout = (RelativeLayout) inflater.inflate(R.layout.fragment_login, container, false);
 
-        layout.findViewById(R.id.button_login).setOnClickListener(this);
+        layout.findViewById(R.id.login_button).setOnClickListener(this);
 
         return layout;
     }
@@ -49,7 +49,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.button_login:
+            case R.id.login_button:
                 doLogin();
                 break;
             default:
