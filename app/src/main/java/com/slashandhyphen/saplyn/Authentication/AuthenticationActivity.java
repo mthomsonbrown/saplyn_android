@@ -27,7 +27,7 @@ public class AuthenticationActivity extends FragmentActivity {
 
     // Debug variables
     public static final String debugAuthToken = "b1e6668141b3dd7f8b12c13ae38bb78c";
-    public static final User debugUser = new User("usernamet@test2.com", "qwertyuiop", "qwertyuiop");
+    public static User debugUser = null;
 
     /**
      * This creates a WelcomeFragment which handles navigation between authentication options and
@@ -37,6 +37,9 @@ public class AuthenticationActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
+
+        // Comment out below line to not debug stuff:
+        debugUser = new User("usernamet@test2.com", "qwertyuiop", "qwertyuiop");
 
         fragment = fm.findFragmentById(R.id.fragment_container);
         if (fragment == null) {

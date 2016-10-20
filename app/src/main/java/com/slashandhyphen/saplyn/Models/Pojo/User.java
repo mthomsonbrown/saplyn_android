@@ -70,6 +70,14 @@ public class User {
         return user.getId();
     }
 
+    public String getPassword() {
+        return user.getPassword();
+    }
+
+    public String getPasswordConfirmation() {
+        return user.getPasswordConfirmation();
+    }
+
     /*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Internal User Class Stuff $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
     /**
      * The actual user data is stored in this internal class in order to conform to Rails' JSON
@@ -169,6 +177,14 @@ public class User {
 
         public Integer getId() {
             return id;
+        }
+
+        private String getPassword() {
+            return password;
+        }
+
+        private String getPasswordConfirmation() {
+            return passwordConfirmation;
         }
     }
 }
