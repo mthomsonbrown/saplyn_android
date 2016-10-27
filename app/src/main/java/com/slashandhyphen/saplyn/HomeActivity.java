@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,8 +14,6 @@ import android.widget.TextView;
 import com.slashandhyphen.saplyn.Authentication.AuthenticationActivity;
 import com.slashandhyphen.saplyn.Models.Pojo.User;
 import com.slashandhyphen.saplyn.Models.SaplynWebservice.SaplynService;
-
-import java.io.IOException;
 
 import okhttp3.ResponseBody;
 import retrofit2.adapter.rxjava.HttpException;
@@ -49,12 +48,11 @@ public class HomeActivity extends Activity implements View.OnClickListener {
         context = getApplicationContext();
 
         preferences = getSharedPreferences("CurrentUser", MODE_PRIVATE);
-        fakeText = (TextView) findViewById(R.id.hello);
-        fakeCreated = (TextView) findViewById(R.id.created);
+        fakeText = (TextView) findViewById(R.id.email_text_view_home);
+        fakeCreated = (TextView) findViewById(R.id.created_text_view_home);
         logoutButton = (Button) findViewById(R.id.button_logout);
         logoutButton.setOnClickListener(this);
 
-        // I think I like this better than defining a button object...unless I need one
         findViewById(R.id.button_deregister).setOnClickListener(this);
 
         authToken = preferences.getString(getString(R.string.auth_token), "");
@@ -136,7 +134,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
      */
     private void doDeregister() {
         userListener = saplynService.viewUser();
-        userListener.subscribeOn(Schedulers.newThread())
+        userListener.subscribeOn(Schedulers.from(AsyncTask.THREAD_POOL_EXECUTOR))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         user -> {

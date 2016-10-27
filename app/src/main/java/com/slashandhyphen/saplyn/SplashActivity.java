@@ -24,7 +24,7 @@ public class SplashActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        start = (Button) findViewById(R.id.splash_button);
+        start = (Button) findViewById(R.id.home_button_splash);
         start.setOnClickListener(this);
     }
 

@@ -2,7 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.slashandhyphen.saplyn.Authentication.WelcomeFragment">
+    tools:context="com.slashandhyphen.saplyn.Authentication.WelcomeFragment"
+    android:id="@+id/fragment_welcome"
+    >
 
 
     <Button
@@ -11,15 +13,17 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:id="@+id/button_welcome_login" />
+        android:id="@+id/button_login_welcome"
+        />
 
     <Button
         android:text="Sign up"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button_welcome_login"
-        android:layout_alignRight="@+id/button_welcome_login"
-        android:layout_alignEnd="@+id/button_welcome_login"
-        android:id="@+id/button_welcome_register" />
+        android:layout_below="@+id/button_login_welcome"
+        android:layout_alignRight="@+id/button_login_welcome"
+        android:layout_alignEnd="@+id/button_login_welcome"
+        android:id="@+id/button_register_welcome"
+        />
 
 </RelativeLayout>

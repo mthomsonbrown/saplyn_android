@@ -2,6 +2,7 @@ package com.slashandhyphen.saplyn.Authentication;
 
 
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.slashandhyphen.saplyn.Models.Pojo.User;
@@ -40,6 +42,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     EditText    emailEditText,
                 password,
                 passwordConfirmation;
+    TextView errorText;
     User user;
 
     @Override
@@ -52,6 +55,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         emailEditText = (EditText) layout.findViewById(R.id.email_edit_text_register);
         password = (EditText) layout.findViewById(R.id.password_edit_text_register);
         passwordConfirmation = (EditText) layout.findViewById(R.id.password_confirmation_edit_text_register);
+        errorText = (TextView) layout.findViewById(R.id.error_text_register);
 
         // Debug junk
         if(debugUser != null) {
@@ -97,7 +101,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
      */
     private void doRegister() {
         userListener = saplynService.registerUser(user);
-        userListener.subscribeOn(Schedulers.newThread())
+        userListener.subscribeOn(Schedulers.from(AsyncTask.THREAD_POOL_EXECUTOR))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         user -> {
@@ -112,9 +116,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                                     if(error.contains("Email address already registered")) {
                                         // cannot pass body.string() here or will
                                         // get "Content-Length and stream length disagree" error
-                                        Toast.makeText(getActivity(),
-                                                "Email address already registered",
-                                                Toast.LENGTH_SHORT).show();
+                                        errorText.setText(R.string.register_error);
+                                        errorText.setVisibility(View.VISIBLE);
                                     }
                                 } catch (IOException e) {
                                     Log.d(TAG, "doRegister: There were an exception");

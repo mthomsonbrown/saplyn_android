@@ -25,5 +25,7 @@
     <string name="change_add_beer_fragment">Change Add Beer Fragment</string>
     <string name="auth_token">AuthToken</string>
     <string name="current_user">CurrentUser</string>
+    <string name="register_error">Email address already registered</string>
+
 
 </resources>

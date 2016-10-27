@@ -41,10 +41,10 @@ public class AuthenticationActivity extends FragmentActivity {
         // Comment out below line to not debug stuff:
         debugUser = new User("usernamet@test2.com", "qwertyuiop", "qwertyuiop");
 
-        fragment = fm.findFragmentById(R.id.fragment_container);
+        fragment = fm.findFragmentById(R.id.main_fragment_container_authentication);
         if (fragment == null) {
             FragmentTransaction ft = fm.beginTransaction();
-            ft.add(R.id.fragment_container, new WelcomeFragment());
+            ft.add(R.id.main_fragment_container_authentication, new WelcomeFragment());
             ft.commit();
         }
     }

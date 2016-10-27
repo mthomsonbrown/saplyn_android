@@ -28,8 +28,8 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
         activity = (AuthenticationActivity) getActivity();
         layout = (RelativeLayout) inflater.inflate(R.layout.fragment_welcome, container, false);
 
-        layout.findViewById(R.id.button_welcome_login).setOnClickListener(this);
-        layout.findViewById(R.id.button_welcome_register).setOnClickListener(this);
+        layout.findViewById(R.id.button_login_welcome).setOnClickListener(this);
+        layout.findViewById(R.id.button_register_welcome).setOnClickListener(this);
 
         return layout;
     }
@@ -40,10 +40,10 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.button_welcome_login:
+            case R.id.button_login_welcome:
                 login();
                 break;
-            case R.id.button_welcome_register:
+            case R.id.button_register_welcome:
                 register();
                 break;
             default:
@@ -56,7 +56,7 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
      */
     private void login() {
         FragmentTransaction ft = activity.fm.beginTransaction();
-        ft.replace(R.id.fragment_container, new LoginFragment());
+        ft.replace(R.id.main_fragment_container_authentication, new LoginFragment());
         ft.commit();
     }
 
@@ -65,7 +65,7 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
      */
     private void register() {
         FragmentTransaction ft = activity.fm.beginTransaction();
-        ft.replace(R.id.fragment_container, new RegisterFragment());
+        ft.replace(R.id.main_fragment_container_authentication, new RegisterFragment());
         ft.commit();
     }
 }
