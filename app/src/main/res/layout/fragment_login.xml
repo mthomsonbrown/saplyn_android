@@ -53,4 +53,15 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:id="@+id/login_button_login" />
+
+    <TextView
+        android:text="Error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/login_button_login"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="35dp"
+        android:visibility="invisible"
+        android:textColor="@color/error"
+        android:id="@+id/error_text_login" />
 </RelativeLayout>

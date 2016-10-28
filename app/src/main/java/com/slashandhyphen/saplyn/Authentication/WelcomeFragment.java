@@ -28,8 +28,8 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
         activity = (AuthenticationActivity) getActivity();
         layout = (RelativeLayout) inflater.inflate(R.layout.fragment_welcome, container, false);
 
-        layout.findViewById(R.id.button_login_welcome).setOnClickListener(this);
-        layout.findViewById(R.id.button_register_welcome).setOnClickListener(this);
+        layout.findViewById(R.id.login_button_welcome).setOnClickListener(this);
+        layout.findViewById(R.id.register_button_welcome).setOnClickListener(this);
 
         return layout;
     }
@@ -40,10 +40,10 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.button_login_welcome:
+            case R.id.login_button_welcome:
                 login();
                 break;
-            case R.id.button_register_welcome:
+            case R.id.register_button_welcome:
                 register();
                 break;
             default:

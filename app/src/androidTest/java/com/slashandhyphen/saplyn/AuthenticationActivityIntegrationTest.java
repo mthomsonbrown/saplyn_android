@@ -46,7 +46,7 @@ public class AuthenticationActivityIntegrationTest {
      */
     @Test
     public void CallRegisterFragment() {
-        onView(withId(R.id.button_register_welcome)).perform(click());
+        onView(withId(R.id.register_button_welcome)).perform(click());
         onView(withId(R.id.fragment_register)).check(matches(isDisplayed()));
     }
 
@@ -56,22 +56,7 @@ public class AuthenticationActivityIntegrationTest {
      */
     @Test
     public void CallLoginFragment() {
-        onView(withId(R.id.button_login_welcome)).perform(click());
+        onView(withId(R.id.login_button_welcome)).perform(click());
         onView(withId(R.id.fragment_login)).check(matches(isDisplayed()));
     }
-
-    /**
-     * Click the register button
-     * - The register fragment should be presented
-     * TODO This should be in a register fragment testing class
-     */
-    @Test
-    public void ClickRegisterButtonFromRegister() {
-        onView(withId(R.id.button_register_welcome)).perform(click());
-        onView(withId(R.id.register_button_register)).check(matches(isDisplayed()));
-
-        onView(withId(R.id.register_button_register)).perform(click());
-        onView(withId(R.id.fragment_register)).check(matches(isDisplayed()));
-    }
-
 }

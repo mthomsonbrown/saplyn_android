@@ -13,17 +13,17 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:id="@+id/button_login_welcome"
+        android:id="@+id/login_button_welcome"
         />
 
     <Button
         android:text="Sign up"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button_login_welcome"
-        android:layout_alignRight="@+id/button_login_welcome"
-        android:layout_alignEnd="@+id/button_login_welcome"
-        android:id="@+id/button_register_welcome"
+        android:layout_below="@+id/login_button_welcome"
+        android:layout_alignRight="@+id/login_button_welcome"
+        android:layout_alignEnd="@+id/login_button_welcome"
+        android:id="@+id/register_button_welcome"
         />
 
 </RelativeLayout>

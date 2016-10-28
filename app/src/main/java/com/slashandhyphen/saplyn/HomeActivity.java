@@ -108,7 +108,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.button_logout:
-                logout();
+                doLogout();
                 break;
             case R.id.button_deregister:
                 doDeregister();
@@ -122,7 +122,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
      * Deletes the shared preference auth_token, then spawns a new instance of
      * the AuthenticationActivity
      */
-    private void logout() {
+    private void doLogout() {
         preferences.edit().remove(getString(R.string.auth_token)).commit();
         Intent intent = new Intent(HomeActivity.this, AuthenticationActivity.class);
         startActivityForResult(intent, 0);
@@ -155,7 +155,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
 
                                                 // user's been deleted from web service, time to
                                                 // log out from the client:
-                                                logout();
+                                                doLogout();
                                             }
                                     );
                         },

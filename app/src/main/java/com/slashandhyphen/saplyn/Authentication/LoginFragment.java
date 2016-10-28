@@ -1,6 +1,7 @@
 package com.slashandhyphen.saplyn.Authentication;
 
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,11 +9,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.slashandhyphen.saplyn.Models.Pojo.User;
 import com.slashandhyphen.saplyn.Models.SaplynWebservice.SaplynService;
 import com.slashandhyphen.saplyn.R;
 
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
+import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -32,6 +38,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private Observable<User> userListener;
     EditText    emailEditText,
                 password;
+    TextView errorText;
     User user;
 
     /**
@@ -88,13 +95,28 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private void doLogin() {
         SaplynService saplynService = new SaplynService();
         userListener = saplynService.loginUser(user);
-        userListener.subscribeOn(Schedulers.newThread())
+        userListener.subscribeOn(Schedulers.from(AsyncTask.THREAD_POOL_EXECUTOR))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         user -> {
                             activity.onAuthenticationSuccessful(user.getAuthToken());
                         },
-                        throwable -> Log.e(TAG, "onErrorFromPopulateUser: "
-                                + throwable.getMessage()));
+                        throwable -> {
+                            if(throwable instanceof HttpException) {
+                                ResponseBody body = ((HttpException) throwable).response().errorBody();
+                                try {
+                                    String error = body.string();
+
+                                    // cannot pass body.string() here or will
+                                    // get "Content-Length and stream length disagree" error
+                                    errorText.setText(error);
+                                    errorText.setVisibility(View.VISIBLE);
+                                } catch (IOException e) {
+                                    Log.d(TAG, "doRegister: There were an exception");
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                );
     }
 }
