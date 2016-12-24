@@ -21,6 +21,7 @@ import okhttp3.ResponseBody;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.exceptions.CompositeException;
 import rx.schedulers.Schedulers;
 
 import static com.slashandhyphen.saplyn.Authentication.AuthenticationActivity.debugUser;
@@ -53,6 +54,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
         emailEditText = (EditText) layout.findViewById(R.id.email_edit_text_login);
         password = (EditText) layout.findViewById(R.id.password_edit_text_login);
+        errorText = (TextView) layout.findViewById(R.id.error_text_login);
 
         // Debug junk
         if(debugUser != null) {
@@ -97,25 +99,31 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         userListener = saplynService.loginUser(user);
         userListener.subscribeOn(Schedulers.from(AsyncTask.THREAD_POOL_EXECUTOR))
                 .observeOn(AndroidSchedulers.mainThread())
+                .onErrorReturn( throwable -> {
+                    if(throwable instanceof HttpException) {
+                        HttpException httpException = ((HttpException) throwable);
+                        String error = null;
+
+                        // Catch errors that the web host handles and output simple message
+                        // rather than error body
+                        if(httpException.code() == 503) {
+                            error = httpException.getMessage();
+                        }
+                        else {
+                            error = saplynService.getErrorMessage(httpException);
+                        }
+
+                        errorText.setText(error);
+                        errorText.setVisibility(View.VISIBLE);
+                    }
+                    return null;
+                })
                 .subscribe(
                         user -> {
                             activity.onAuthenticationSuccessful(user.getAuthToken());
                         },
                         throwable -> {
-                            if(throwable instanceof HttpException) {
-                                ResponseBody body = ((HttpException) throwable).response().errorBody();
-                                try {
-                                    String error = body.string();
-
-                                    // cannot pass body.string() here or will
-                                    // get "Content-Length and stream length disagree" error
-                                    errorText.setText(error);
-                                    errorText.setVisibility(View.VISIBLE);
-                                } catch (IOException e) {
-                                    Log.d(TAG, "doRegister: There were an exception");
-                                    e.printStackTrace();
-                                }
-                            }
+                            Log.d(TAG, "I don't /think/ we should have ended up here.");
                         }
                 );
     }

@@ -1,5 +1,6 @@
 package com.slashandhyphen.saplyn;
 
+import android.support.test.espresso.ViewAction;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -10,6 +11,7 @@ import org.junit.runner.*;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -21,14 +23,7 @@ import static org.hamcrest.core.IsNot.not;
  * This class tests login scenarios
  */
 @RunWith(AndroidJUnit4.class)
-public class LoginFragmentIntegrationTest {
-
-    /**
-     * This rule spawns an authentication activity
-     */
-    @Rule
-    public ActivityTestRule<AuthenticationActivity> activityTestRule =
-            new ActivityTestRule<>(AuthenticationActivity.class);
+public class LoginFragmentIntegrationTest extends AuthenticationIntegrationTests {
 
     /**
      * registers the user, logs them out, and then brings up the login fragment
@@ -37,6 +32,7 @@ public class LoginFragmentIntegrationTest {
     public void setup() {
         // TODO Registration should happen in a @BeforeClass
         onView(withId(R.id.register_button_welcome)).perform(click());
+        fillRegistrationFields();
         onView(withId(R.id.register_button_register)).perform(click());
         onView(withId(R.id.button_logout)).perform(click());
         onView(withId(R.id.login_button_welcome)).perform(click());
@@ -48,7 +44,7 @@ public class LoginFragmentIntegrationTest {
      */
     @After
     public void tearDown() {
-        onView(withId(R.id.button_logout)).perform(click());
+        onView(withId(R.id.button_deregister)).perform(click());
     }
 
     /**
@@ -57,7 +53,18 @@ public class LoginFragmentIntegrationTest {
      */
     @Test
     public void LoginUser() {
-        onView(withId(R.id.error_text_login)).check(matches(not(isDisplayed())));
+        fillLoginFields();
+        onView(withId(R.id.login_button_login)).perform(click());
+        onView(withId(R.id.activity_home)).check(matches(isDisplayed()));
+    }
+
+    /**
+     * @test
+     * Logging in user should take them to home activity
+     */
+    @Test
+    public void LoginUserAgain() {
+        fillLoginFields();
         onView(withId(R.id.login_button_login)).perform(click());
         onView(withId(R.id.activity_home)).check(matches(isDisplayed()));
     }

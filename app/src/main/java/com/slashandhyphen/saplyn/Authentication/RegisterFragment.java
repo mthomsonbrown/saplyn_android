@@ -2,6 +2,7 @@ package com.slashandhyphen.saplyn.Authentication;
 
 
 import android.app.Fragment;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,9 +14,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.slashandhyphen.saplyn.Models.Pojo.User;
 import com.slashandhyphen.saplyn.Models.SaplynWebservice.SaplynService;
 import com.slashandhyphen.saplyn.R;
+import com.squareup.okhttp.internal.http.StreamAllocation;
 
 import java.io.IOException;
 
@@ -38,13 +42,16 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     RelativeLayout layout;
     AuthenticationActivity activity;
     private Observable<User> userListener;
-    SaplynService saplynService;
+
     EditText    emailEditText,
                 password,
                 passwordConfirmation;
     TextView errorText;
     User user;
 
+    /**
+     * Creates references to relevant views.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -66,7 +73,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
         layout.findViewById(R.id.register_button_register).setOnClickListener(this);
 
-        saplynService = new SaplynService();
 
         return layout;
     }
@@ -100,30 +106,38 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
      * Sends a POST request to the saplyn webservice in order to create a new user object
      */
     private void doRegister() {
+        SaplynService saplynService = new SaplynService();
         userListener = saplynService.registerUser(user);
         userListener.subscribeOn(Schedulers.from(AsyncTask.THREAD_POOL_EXECUTOR))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
+
+                // For some reason the registration response doesn't hit the throwable in the
+                // subscribe function, but will call into this method.
+                .onErrorReturn( throwable -> {
+                    if(throwable instanceof HttpException) {
+                        HttpException httpException = ((HttpException) throwable);
+                        String error = null;
+
+                        // Catch errors that the web host handles and output simple message
+                        // rather than error body
+                        if(httpException.code() == 503) {
+                            error = httpException.getMessage();
+                        }
+                        else {
+                            error = saplynService.getErrorMessage(httpException);
+                        }
+
+                        errorText.setText(error);
+                        errorText.setVisibility(View.VISIBLE);
+                    }
+                    return null;
+                } )
+                .subscribe (
                         user -> {
                             activity.onAuthenticationSuccessful(user.getAuthToken());
                         },
                         throwable -> {
-                            if(throwable instanceof HttpException) {
-                                ResponseBody body = ((HttpException) throwable).response().errorBody();
-                                try {
-                                    // TODO Should definitely handle errors better than a string compare
-                                    String error = body.string();
-                                    if(error.contains("Email address already registered")) {
-                                        // cannot pass body.string() here or will
-                                        // get "Content-Length and stream length disagree" error
-                                        errorText.setText(R.string.register_error);
-                                        errorText.setVisibility(View.VISIBLE);
-                                    }
-                                } catch (IOException e) {
-                                    Log.d(TAG, "doRegister: There were an exception");
-                                    e.printStackTrace();
-                                }
-                            }
+                            Log.d(TAG, "I don't /think/ we should have ended up here.");
                         }
                 );
     }

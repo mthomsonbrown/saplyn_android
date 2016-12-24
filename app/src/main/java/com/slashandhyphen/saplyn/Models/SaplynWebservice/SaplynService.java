@@ -3,15 +3,21 @@ package com.slashandhyphen.saplyn.Models.SaplynWebservice;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.slashandhyphen.saplyn.Models.Pojo.User;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
+
+import org.xml.sax.ErrorHandler;
+
+import java.io.IOException;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.HttpException;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
@@ -109,6 +115,20 @@ public class SaplynService {
                 });
 
         return builder.build();
+    }
+
+    /**
+     * Parses an http exception and returns the message as a string
+     */
+    public String getErrorMessage(HttpException httpException) {
+        Gson gson = new Gson();
+        JsonObject jsonObject = null;
+        try {
+            jsonObject = gson.fromJson(httpException.response().errorBody().string(), JsonObject.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return jsonObject.get("error").toString();
     }
 
     /*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Interface Getters/Setters $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/

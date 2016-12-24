@@ -22,7 +22,7 @@ import static org.hamcrest.core.IsNot.not;
  * This class tests registration scenarios.
  */
 @RunWith(AndroidJUnit4.class)
-public class RegisterFragmentIntegrationTest {
+public class RegisterFragmentIntegrationTest extends AuthenticationIntegrationTests {
 
     /**
      * This rule spawns an authentication activity
@@ -59,6 +59,7 @@ public class RegisterFragmentIntegrationTest {
      */
     @Test
     public void RegisterUser() {
+        fillRegistrationFields();
         onView(withId(R.id.error_text_register)).check(matches(not(isDisplayed())));
         onView(withId(R.id.register_button_register)).perform(click());
         onView(withId(R.id.activity_home)).check(matches(isDisplayed()));
