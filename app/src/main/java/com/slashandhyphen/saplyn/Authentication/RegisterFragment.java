@@ -2,6 +2,8 @@ package com.slashandhyphen.saplyn.Authentication;
 
 
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +23,8 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+import static com.slashandhyphen.saplyn.Models.SaplynWebservice.SaplynService.debugLvl;
+
 /**
  * Created by Mike on 10/11/2016.
  *
@@ -39,6 +43,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     TextView errorText;
     User user;
 
+    SharedPreferences preferences;
+
     /**
      * Creates references to relevant views.
      */
@@ -56,6 +62,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
         layout.findViewById(R.id.register_button_register).setOnClickListener(this);
 
+        preferences = this.getActivity().getSharedPreferences("CurrentUser", Context.MODE_PRIVATE);
 
         return layout;
     }
@@ -89,7 +96,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
      * Sends a POST request to the saplyn webservice in order to create a new user object
      */
     private void doRegister() {
-        SaplynService saplynService = new SaplynService();
+        SaplynService saplynService = new SaplynService(preferences.getInt(debugLvl, -1));
         userListener = saplynService.registerUser(user);
         userListener.subscribeOn(Schedulers.from(AsyncTask.THREAD_POOL_EXECUTOR))
                 .observeOn(AndroidSchedulers.mainThread())

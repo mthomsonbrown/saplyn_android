@@ -1,6 +1,7 @@
 package com.slashandhyphen.saplyn.Authentication;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -11,10 +12,14 @@ import android.os.Bundle;
 
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toolbar;
 
 import com.slashandhyphen.saplyn.HomeActivity;
 import com.slashandhyphen.saplyn.R;
+
+import static com.slashandhyphen.saplyn.Models.SaplynWebservice.SaplynService.debugLvl;
+
 
 /**
  * Created by Mike on 9/30/2016.
@@ -30,6 +35,29 @@ public class AuthenticationActivity extends Activity {
     private Toolbar toolbar;
 
     /**
+     * This creates a WelcomeFragment which handles navigation between authentication options and
+     * ultimately provides an auth token.
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_authentication);
+
+        preferences = getSharedPreferences("CurrentUser", Context.MODE_PRIVATE);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setActionBar(toolbar);
+
+
+        fragment = fm.findFragmentById(R.id.main_fragment_container_authentication);
+        if (fragment == null) {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.add(R.id.main_fragment_container_authentication, new WelcomeFragment());
+            ft.commit();
+        }
+    }
+
+    /**
      * Adds a menu xml resource to the toolbar
      * @param menu Not sure...
      * @return true for some reason.
@@ -41,25 +69,51 @@ public class AuthenticationActivity extends Activity {
         return true;
     }
 
-    /**
-     * This creates a WelcomeFragment which handles navigation between authentication options and
-     * ultimately provides an auth token.
-     */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_authentication);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-
-        setActionBar(toolbar);
-
-
-        fragment = fm.findFragmentById(R.id.main_fragment_container_authentication);
-        if (fragment == null) {
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.add(R.id.main_fragment_container_authentication, new WelcomeFragment());
-            ft.commit();
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                doSettings();
+                break;
+            default:
+                break;
         }
+
+        return true;
+    }
+
+    /**
+     * Debuggish thing right now to choose what endpoint
+     * to hit, and possibly some canned credentials
+     */
+    private void doSettings() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose Endpoint");
+        CharSequence[] items = {"Production", "Personal", "Debug"};
+
+        builder.setSingleChoiceItems(items,
+                preferences.getInt(debugLvl, -1),
+                (dialogInterface, item) -> {
+                    SharedPreferences.Editor editor = preferences.edit();
+                    switch (item) {
+                        case 0:
+                            editor.putInt(debugLvl, 0);
+                            break;
+                        case 1:
+                            editor.putInt(debugLvl, 1);
+                            break;
+                        case 2:
+                            editor.putInt(debugLvl, 2);
+                            break;
+                        default:
+                            break;
+                    }
+                    editor.apply();
+                    dialogInterface.dismiss();
+                });
+
+        builder.create().show();
     }
 
     /**
@@ -81,7 +135,6 @@ public class AuthenticationActivity extends Activity {
      * @param authToken the authentication token provisioned from the server
      */
     public void storeAuthToken(String authToken) {
-        preferences = getSharedPreferences("CurrentUser", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(getString(R.string.auth_token), authToken);
         editor.apply();

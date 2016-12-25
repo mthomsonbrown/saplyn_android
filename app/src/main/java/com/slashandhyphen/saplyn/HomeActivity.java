@@ -22,6 +22,8 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+import static com.slashandhyphen.saplyn.Models.SaplynWebservice.SaplynService.debugLvl;
+
 /**
  * Created by Mike on 9/30/2016.
  *
@@ -57,7 +59,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
         findViewById(R.id.button_deregister).setOnClickListener(this);
 
         authToken = preferences.getString(getString(R.string.auth_token), "");
-        saplynService = new SaplynService(authToken);
+        saplynService = new SaplynService(preferences.getInt(debugLvl, -1), authToken);
     }
 
     /**

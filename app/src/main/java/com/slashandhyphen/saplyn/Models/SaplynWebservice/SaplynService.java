@@ -34,16 +34,24 @@ import rx.Observable;
  * bloated and be divvied into separate classes.
  */
 public class SaplynService {
-    private static final String BASE_URL_TEST = "https://saplyn-ookamijin.c9users.io/api/v1/";
-    private static final String BASE_URL = "https://damp-castle-87964.herokuapp.com/api/v1/";
+    private static final String BASE_URL        = "https://damp-castle-87964.herokuapp.com/api/v1/";
+    private static final String BASE_URL_PERS   = "https://damp-castle-87964.herokuapp.com/api/v1/";
+    private static final String BASE_URL_TEST   = "https://saplyn-ookamijin.c9users.io/api/v1/";
     private static final String authTokenMissingException = "To use this endpoint you need to " +
             "create a SaplynService that populates the authToken argument in the constructor";
 
     private SaplynInterface saplynInterface;
     private String authToken;
+    private String activeUrl = null;
 
-    public SaplynService() {
-        saplynInterface = getRetrofitBuild().create(SaplynInterface.class);
+    // This is a quick fix for adding debug options to the UI.
+    // 0 = Production
+    // 1 = Personal
+    // 2 = Debug
+    public static String debugLvl = "DebugLevel";
+
+    public SaplynService(int debugLvl) {
+        this.init(debugLvl, null);
     }
 
     /**
@@ -54,8 +62,25 @@ public class SaplynService {
      * where data is coming from, and that functionality might be extended at some point, so I'll
      * leave it like this for now.
      */
-    public SaplynService(String authToken) {
+    public SaplynService(int debugLvl, String authToken) {
+        this.init(debugLvl, authToken);
+    }
+
+    private void init(int debugLvl, String authToken) {
         this.authToken = authToken;
+        switch (debugLvl) {
+            case 0:
+                activeUrl = BASE_URL;
+                break;
+            case 1:
+                activeUrl = BASE_URL_PERS;
+                break;
+            case 2:
+                activeUrl = BASE_URL_TEST;
+                break;
+            default:
+                break;
+        }
         saplynInterface = getRetrofitBuild().create(SaplynInterface.class);
     }
 
@@ -80,7 +105,7 @@ public class SaplynService {
             return new Retrofit.Builder()
                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create(withCamelCaseConversion()))
-                    .baseUrl(BASE_URL)
+                    .baseUrl(activeUrl)
                     .client(getHeader(authToken))
                     .build();
     }

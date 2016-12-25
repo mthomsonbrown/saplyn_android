@@ -1,6 +1,8 @@
 package com.slashandhyphen.saplyn.Authentication;
 
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +22,8 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+import static com.slashandhyphen.saplyn.Models.SaplynWebservice.SaplynService.debugLvl;
+
 
 /**
  * Created by Mike on 10/5/2016.
@@ -37,6 +41,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     TextView errorText;
     User user;
 
+    SharedPreferences preferences;
+
     /**
      * Creates references to relevant views.
      */
@@ -52,6 +58,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         errorText = (TextView) layout.findViewById(R.id.error_text_login);
 
         layout.findViewById(R.id.login_button_login).setOnClickListener(this);
+
+        preferences = this.getActivity().getSharedPreferences("CurrentUser", Context.MODE_PRIVATE);
 
         return layout;
     }
@@ -84,7 +92,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
      * a call is made to activity.onAuthenticationSuccessful with the provisioned auth token.
      */
     private void doLogin() {
-        SaplynService saplynService = new SaplynService();
+        SaplynService saplynService = new SaplynService(preferences.getInt(debugLvl, -1));
         userListener = saplynService.loginUser(user);
         userListener.subscribeOn(Schedulers.from(AsyncTask.THREAD_POOL_EXECUTOR))
                 .observeOn(AndroidSchedulers.mainThread())
