@@ -34,7 +34,8 @@ import rx.Observable;
  * bloated and be divvied into separate classes.
  */
 public class SaplynService {
-    private static final String BASE_URL = "https://saplyn-ookamijin.c9users.io/api/v1/";
+    private static final String BASE_URL_TEST = "https://saplyn-ookamijin.c9users.io/api/v1/";
+    private static final String BASE_URL = "https://damp-castle-87964.herokuapp.com/api/v1/";
     private static final String authTokenMissingException = "To use this endpoint you need to " +
             "create a SaplynService that populates the authToken argument in the constructor";
 

@@ -1,5 +1,6 @@
 package com.slashandhyphen.saplyn;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -122,6 +123,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
      * Deletes the shared preference auth_token, then spawns a new instance of
      * the AuthenticationActivity
      */
+    @SuppressLint("CommitPrefEdits") // Preferences change needs to be synchronous
     private void doLogout() {
         preferences.edit().remove(getString(R.string.auth_token)).commit();
         Intent intent = new Intent(HomeActivity.this, AuthenticationActivity.class);

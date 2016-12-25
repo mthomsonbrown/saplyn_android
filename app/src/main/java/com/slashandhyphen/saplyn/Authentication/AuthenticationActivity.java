@@ -1,5 +1,6 @@
 package com.slashandhyphen.saplyn.Authentication;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -7,10 +8,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.widget.Toolbar;
 
 import com.slashandhyphen.saplyn.HomeActivity;
-import com.slashandhyphen.saplyn.Models.Pojo.User;
 import com.slashandhyphen.saplyn.R;
 
 /**
@@ -20,13 +23,23 @@ import com.slashandhyphen.saplyn.R;
  * handle authentication and return to the calling function after adding an auth token to the
  * sharedPreferences object.
  */
-public class AuthenticationActivity extends FragmentActivity {
+public class AuthenticationActivity extends Activity {
     private SharedPreferences preferences;
     protected FragmentManager fm = getFragmentManager();
     protected Fragment fragment;
+    private Toolbar toolbar;
 
-    // Debug variables
-    public static User debugUser = null;
+    /**
+     * Adds a menu xml resource to the toolbar
+     * @param menu Not sure...
+     * @return true for some reason.
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
 
     /**
      * This creates a WelcomeFragment which handles navigation between authentication options and
@@ -36,9 +49,10 @@ public class AuthenticationActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        // Comment out below line to not manually debug stuff:
-        // debugUser = new User("usernamet@test2.com", "qwertyuiop", "qwertyuiop");
+        setActionBar(toolbar);
+
 
         fragment = fm.findFragmentById(R.id.main_fragment_container_authentication);
         if (fragment == null) {

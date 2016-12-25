@@ -2,7 +2,6 @@ package com.slashandhyphen.saplyn.Authentication;
 
 
 import android.app.Fragment;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,24 +11,15 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.slashandhyphen.saplyn.Models.Pojo.User;
 import com.slashandhyphen.saplyn.Models.SaplynWebservice.SaplynService;
 import com.slashandhyphen.saplyn.R;
-import com.squareup.okhttp.internal.http.StreamAllocation;
 
-import java.io.IOException;
-
-import okhttp3.ResponseBody;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-
-import static com.slashandhyphen.saplyn.Authentication.AuthenticationActivity.debugUser;
 
 /**
  * Created by Mike on 10/11/2016.
@@ -63,13 +53,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         password = (EditText) layout.findViewById(R.id.password_edit_text_register);
         passwordConfirmation = (EditText) layout.findViewById(R.id.password_confirmation_edit_text_register);
         errorText = (TextView) layout.findViewById(R.id.error_text_register);
-
-        // Debug junk
-        if(debugUser != null) {
-            emailEditText.setText(debugUser.getEmail());
-            password.setText(debugUser.getPassword());
-            passwordConfirmation.setText(debugUser.getPasswordConfirmation());
-        }
 
         layout.findViewById(R.id.register_button_register).setOnClickListener(this);
 

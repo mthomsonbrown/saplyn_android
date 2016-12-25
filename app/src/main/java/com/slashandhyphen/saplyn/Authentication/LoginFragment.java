@@ -15,16 +15,11 @@ import com.slashandhyphen.saplyn.Models.Pojo.User;
 import com.slashandhyphen.saplyn.Models.SaplynWebservice.SaplynService;
 import com.slashandhyphen.saplyn.R;
 
-import java.io.IOException;
-
-import okhttp3.ResponseBody;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.exceptions.CompositeException;
 import rx.schedulers.Schedulers;
 
-import static com.slashandhyphen.saplyn.Authentication.AuthenticationActivity.debugUser;
 
 /**
  * Created by Mike on 10/5/2016.
@@ -55,12 +50,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         emailEditText = (EditText) layout.findViewById(R.id.email_edit_text_login);
         password = (EditText) layout.findViewById(R.id.password_edit_text_login);
         errorText = (TextView) layout.findViewById(R.id.error_text_login);
-
-        // Debug junk
-        if(debugUser != null) {
-            emailEditText.setText(debugUser.getEmail());
-            password.setText(debugUser.getPassword());
-        }
 
         layout.findViewById(R.id.login_button_login).setOnClickListener(this);
 
@@ -124,6 +113,23 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                         },
                         throwable -> {
                             Log.d(TAG, "I don't /think/ we should have ended up here.");
+
+                            if(throwable instanceof HttpException) {
+                                HttpException httpException = ((HttpException) throwable);
+                                String error = null;
+
+                                // Catch errors that the web host handles and output simple message
+                                // rather than error body
+                                if(httpException.code() == 503) {
+                                    error = httpException.getMessage();
+                                }
+                                else {
+                                    error = saplynService.getErrorMessage(httpException);
+                                }
+
+                                errorText.setText(error);
+                                errorText.setVisibility(View.VISIBLE);
+                            }
                         }
                 );
     }
