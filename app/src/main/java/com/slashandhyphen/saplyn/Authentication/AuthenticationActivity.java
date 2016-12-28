@@ -15,7 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toolbar;
 
-import com.slashandhyphen.saplyn.HomeActivity;
+import com.slashandhyphen.saplyn.HomeRealm.HomeActivity;
 import com.slashandhyphen.saplyn.R;
 
 import static com.slashandhyphen.saplyn.Models.SaplynWebservice.SaplynService.debugLvl;
@@ -87,7 +87,6 @@ public class AuthenticationActivity extends Activity {
      * to hit, and possibly some canned credentials
      */
     private void doSettings() {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose Endpoint");
         CharSequence[] items = {"Production", "Personal", "Debug"};
