@@ -49,10 +49,10 @@ public class HomeActivity extends Activity {
     private static String TAG = "~Home~";
 
     protected User user;
+    protected FragmentManager fm = getFragmentManager();
     private Observable<User> userListener;
     private String authToken;
     private SaplynService saplynService;
-    private FragmentManager fm = getFragmentManager();
 
     /**
      * Loads what the user sees when first entering user space.

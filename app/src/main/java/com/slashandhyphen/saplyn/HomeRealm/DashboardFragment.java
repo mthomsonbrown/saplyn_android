@@ -1,6 +1,7 @@
 package com.slashandhyphen.saplyn.HomeRealm;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,6 +65,8 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     }
 
     private void doEntry() {
-        Toast.makeText(getActivity(), "Got to add entry", Toast.LENGTH_SHORT).show();
+        FragmentTransaction ft = activity.fm.beginTransaction();
+        ft.replace(R.id.main_fragment_container_home, new EntryFragment());
+        ft.commit();
     }
 }
