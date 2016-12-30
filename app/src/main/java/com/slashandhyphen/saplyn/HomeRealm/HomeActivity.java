@@ -64,8 +64,7 @@ public class HomeActivity extends Activity {
 
         preferences = getSharedPreferences("CurrentUser", MODE_PRIVATE);
 
-        authToken = preferences.getString(getString(R.string.auth_token), "");
-        saplynService = new SaplynService(preferences.getInt(debugLvl, -1), authToken);
+        validateToken();
 
     }
 
@@ -75,6 +74,27 @@ public class HomeActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
+
+        validateToken();
+    }
+
+    /**
+     * Removes the token from local memory and then runs the token validation flow
+     * TODO token stuff should probably be handled by the authentication activity
+     */
+    @SuppressLint("CommitPrefEdits") // Preferences change needs to be synchronous
+    public void invalidateToken() {
+        preferences.edit().remove(getString(R.string.auth_token)).commit();
+        validateToken();
+    }
+
+    /**
+     * Pull the token from shared preferences and make sure it is valid (exists)
+     */
+    protected void validateToken() {
+
+        authToken = preferences.getString(getString(R.string.auth_token), "");
+        saplynService = new SaplynService(preferences.getInt(debugLvl, -1), authToken);
 
         // Check if user already authenticated
         if (authToken.equals("")) {
@@ -112,6 +132,38 @@ public class HomeActivity extends Activity {
                                 Log.e(TAG, "onErrorFromPopulateUser: "
                                         + body.toString());
                             }
+                        }
+                );
+    }
+
+    public void deregisterUser() {
+        removeUser();
+    }
+
+    private void removeUser() {
+
+        userListener = saplynService.viewUser();
+        userListener.subscribeOn(Schedulers.from(AsyncTask.THREAD_POOL_EXECUTOR))
+                .observeOn(AndroidSchedulers.mainThread())
+                .onErrorReturn(throwable -> {
+
+                    Log.e(TAG, "Got on error: " + throwable.getMessage());
+
+                    return null;
+                })
+                .subscribe(
+                        user -> {
+                            Observable<ResponseBody> response = saplynService.destroyUser(user.getId());
+                            response.subscribeOn(Schedulers.newThread())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(
+                                            theResponse -> {
+                                                invalidateToken();
+                                            }
+                                    );
+                        },
+                        throwable -> {
+                            Log.e(TAG, "doDeregister: " + throwable.getMessage());
                         }
                 );
     }

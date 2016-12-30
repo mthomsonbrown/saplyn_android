@@ -1,15 +1,20 @@
 package com.slashandhyphen.saplyn.HomeRealm;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.slashandhyphen.saplyn.R;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by Mike on 12/27/2016.
@@ -21,6 +26,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     private static String TAG = "~DashboardFragment~";
     RelativeLayout layout;
     HomeActivity activity;
+    private static SharedPreferences preferences;
 
     /**
      * {@inheritDoc}
@@ -35,6 +41,8 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         layout.findViewById(R.id.button_logout).setOnClickListener(this);
         layout.findViewById(R.id.button_deregister).setOnClickListener(this);
         layout.findViewById(R.id.button_entry).setOnClickListener(this);
+
+        preferences = getActivity().getSharedPreferences("CurrentUser", MODE_PRIVATE);
 
         return layout;
     }
@@ -56,12 +64,15 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         }
     }
 
+    /**
+     * Removes the auth_token from shared preferences and then returns to the home activity
+     */
     private void doLogout() {
-        Toast.makeText(getActivity(), "Got to logout", Toast.LENGTH_SHORT).show();
+        ((HomeActivity) getActivity()).invalidateToken();
     }
 
     private void doDeregister() {
-        Toast.makeText(getActivity(), "Got to degreister", Toast.LENGTH_SHORT).show();
+        ((HomeActivity) getActivity()).deregisterUser();
     }
 
     private void doEntry() {
