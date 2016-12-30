@@ -63,9 +63,6 @@ public class HomeActivity extends Activity {
         setContentView(R.layout.activity_home);
 
         preferences = getSharedPreferences("CurrentUser", MODE_PRIVATE);
-
-        validateToken();
-
     }
 
     /**
@@ -102,10 +99,6 @@ public class HomeActivity extends Activity {
             startActivityForResult(intent, 0);
         }
         else {
-            // After user is authenticated, grab their data from the net
-            // TODO This will ping the net on every resume (which is probably frequent).
-            // TODO Need to add in syncing logic
-            userListener = saplynService.viewUser();
             populateUser();
         }
     }
@@ -114,6 +107,10 @@ public class HomeActivity extends Activity {
      * Callback to fill user data fields.
      */
     private void populateUser() {
+        // After user is authenticated, grab their data from the net
+        // TODO This will ping the net on every resume (which is probably frequent).
+        userListener = saplynService.viewUser();
+
         userListener.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -136,35 +133,18 @@ public class HomeActivity extends Activity {
                 );
     }
 
-    public void deregisterUser() {
-        removeUser();
-    }
-
-    private void removeUser() {
-
-        userListener = saplynService.viewUser();
-        userListener.subscribeOn(Schedulers.from(AsyncTask.THREAD_POOL_EXECUTOR))
+    protected void deregisterUser() {
+        Observable<ResponseBody> response = saplynService.destroyUser(user.getId());
+        response.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .onErrorReturn(throwable -> {
-
-                    Log.e(TAG, "Got on error: " + throwable.getMessage());
-
-                    return null;
-                })
                 .subscribe(
-                        user -> {
-                            Observable<ResponseBody> response = saplynService.destroyUser(user.getId());
-                            response.subscribeOn(Schedulers.newThread())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(
-                                            theResponse -> {
-                                                invalidateToken();
-                                            }
-                                    );
-                        },
-                        throwable -> {
-                            Log.e(TAG, "doDeregister: " + throwable.getMessage());
+                        theResponse -> {
+                            invalidateToken();
                         }
                 );
+    }
+
+    protected void addEntry(String entry) {
+//        userListener.sul
     }
 }
